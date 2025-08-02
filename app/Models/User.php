@@ -23,6 +23,11 @@ class User extends Authenticatable implements FilamentUser
      public function canAccessPanel(Panel $panel): bool
     {
         // TODO CHECK ONLY USER WITH ADMIN ROLE  @Seta
+        return $this->isAdmin();
+    }
+
+    public function isAdmin(){
+        // TODO @Seta
         return true;
     }
  
