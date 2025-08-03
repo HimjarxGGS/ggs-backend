@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->date('event_date');
+            $table->enum('status', ['active', 'finished'])->default('active');
+            $table->enum('event_format', ['online', 'offline'])->default('offline');
+            $table->string('location');
+            $table->string('poster');
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('dokumentasi_event', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_event')->constrained('events');
+            $table->foreignId('event_id')->constrained('events');
             $table->string('image');
             //
         });
