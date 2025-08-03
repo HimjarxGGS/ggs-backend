@@ -22,19 +22,18 @@ class User extends Authenticatable implements FilamentUser
 
      public function canAccessPanel(Panel $panel): bool
     {
-        // TODO CHECK ONLY USER WITH ADMIN ROLE  @Seta
         return $this->isAdmin();
     }
 
     public function isAdmin(){
-        // TODO @Seta
-        return true;
+        return ($this->role === 'member');
     }
  
     protected $fillable = [
         'name',
-        'email',
+        'username',
         'password',
+        'role',
     ];
 
     /**
@@ -55,7 +54,6 @@ class User extends Authenticatable implements FilamentUser
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
