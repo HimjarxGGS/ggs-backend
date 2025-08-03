@@ -17,6 +17,7 @@ class Blog extends Model
         'slug',
         'tag',
         'author',
+        'pic',
     ];
 
     public function categories() : BelongsToMany{

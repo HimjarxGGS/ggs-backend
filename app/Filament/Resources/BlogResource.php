@@ -6,24 +6,25 @@ use App\Filament\Resources\BlogResource\Pages;
 use Filament\Forms\Get;
 use Illuminate\Support\Str;
 
-use App\Filament\Resources\BlogResource\RelationManagers\CategoriesRelationManager;
 use App\Models\Blog;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Set;
 use Filament\Tables;
-use Illuminate\Support\Facades\Auth;
+
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Container\Attributes\Auth;
 
 class BlogResource extends Resource
 {
@@ -31,12 +32,7 @@ class BlogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['pic'] = Auth::id();
-
-        return $data;
-    }
+ 
     public static function form(Form $form): Form
     {
         return $form
@@ -73,12 +69,15 @@ class BlogResource extends Resource
                 FileUpload::make('img')
                     ->label("Main Image For Blog")
                     ->image()
+                    ->required()
                     ->disk('public')
                     ->directory('blog-thumbnail')
                     ->columnSpanFull(),
-                MarkdownEditor::make('content')
+                RichEditor::make('content')
                     ->label("Blog Content")
                     ->required()
+
+                    ->fileAttachmentsDirectory('attachments')
                     ->maxLength(255)
                     ->columnSpanFull(),
                 TextInput::make('author')
@@ -95,7 +94,10 @@ class BlogResource extends Resource
                             ])->required()->live(),
                         DateTimePicker::make('date_published_at')
                             ->hidden(fn(Get $get) => $get('status') !== 'published'),
-                    ])
+                    ]),
+                    // TextInput::make('pic')->required(
+                    //     fn (): string => Filament::auth()->id()
+                    // ),
 
 
             ]);
@@ -105,7 +107,27 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
-                //
+                // ImageColumn::make('img'),
+                TextColumn::make('title'),
+                TextColumn::make('author'),
+                TextColumn::make('categories.category_name'),
+                TextColumn::make('pic.name')->label("Created By"),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        'rejected' => 'danger',
+                    }),
+
+                TextColumn::make('created_at')
+                    ->since()
+                    ->dateTimeTooltip(),
+                TextColumn::make('date_published_at')
+                    ->label('Published At')
+                    ->since()
+                    ->dateTimeTooltip()
             ])
             ->filters([
                 //
@@ -124,7 +146,7 @@ class BlogResource extends Resource
     {
         return [
             //
-            CategoriesRelationManager::class
+            // CategoriesRelationManager::class
         ];
     }
 

@@ -39,7 +39,7 @@ class Login extends BaseAuth{
     protected function getLoginFormComponent(): Component 
     {
         return TextInput::make('login')
-            ->label('Login')
+            ->label('Username')
             ->required()
             ->autocomplete()
             ->autofocus()

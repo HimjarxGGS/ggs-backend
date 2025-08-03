@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slug');
             $table->string('tag');
             $table->string('author');
-            $table->dateTime('date_published_at');
+            $table->dateTime('date_published_at')->nullable();
             $table->foreignId('pic')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('status', ['draft', 'reviewing', 'published'])->default('published');
             $table->timestamps();

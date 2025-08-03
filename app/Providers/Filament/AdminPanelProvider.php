@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->authGuard('web')
             ->brandName("Green Generation Surabaya")
             ->brandLogoHeight(50)
             // ->brandLogo(asset('storage/images/ggs_logo.png'))
