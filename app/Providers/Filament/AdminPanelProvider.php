@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\Login;
@@ -6,6 +7,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -26,10 +28,16 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->brandName("Green Generation Surabaya")
+            ->brandLogoHeight(50)
+            // ->brandLogo(asset('storage/images/ggs_logo.png'))
             ->path('')
+
             ->login(Login::class)
+            ->sidebarFullyCollapsibleOnDesktop()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex("#34C759"),
+                'secondary' => Color::hex("#213921"),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
