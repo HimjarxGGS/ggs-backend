@@ -10,7 +10,7 @@ use App\Models\Blog;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
@@ -21,7 +21,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Set;
 use Filament\Tables;
-
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Container\Attributes\Auth;
@@ -32,7 +33,8 @@ class BlogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
- 
+    protected static $formActionsAlignment = Alignment::Right;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -72,7 +74,14 @@ class BlogResource extends Resource
                     ->required()
                     ->disk('public')
                     ->directory('blog-thumbnail')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        null,
+                        '16:9',
+                        '4:3',
+                        '1:1',
+                    ]),
                 RichEditor::make('content')
                     ->label("Blog Content")
                     ->required()
@@ -95,9 +104,9 @@ class BlogResource extends Resource
                         DateTimePicker::make('date_published_at')
                             ->hidden(fn(Get $get) => $get('status') !== 'published'),
                     ]),
-                    // TextInput::make('pic')->required(
-                    //     fn (): string => Filament::auth()->id()
-                    // ),
+                TextInput::make('pic')->required(
+                    fn(): string => Filament::auth()->id()
+                ),
 
 
             ]);
@@ -107,11 +116,12 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
-                // ImageColumn::make('img'),
+                ImageColumn::make('img'),
                 TextColumn::make('title'),
                 TextColumn::make('author'),
                 TextColumn::make('categories.category_name'),
-                TextColumn::make('pic.name')->label("Created By"),
+                TextColumn::make('pic.username')->label("Created By"),
+                TextColumn::make('pic')->label("PIC ID"),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -127,13 +137,24 @@ class BlogResource extends Resource
                 TextColumn::make('date_published_at')
                     ->label('Published At')
                     ->since()
-                    ->dateTimeTooltip()
+                    ->dateTimeTooltip(),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                // Table\Actions\::make().
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()->after(function (Blog $record) {
+                    // delete single
+                    if ($record->img) {
+                       Storage::disk('public')->delete($record->img);
+                    }
+                    // delete multiple
+                    if ($record->galery) {
+                       foreach ($record->galery as $ph) Storage::disk('public')->delete($ph);
+                    }
+                 }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
