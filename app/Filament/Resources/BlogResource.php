@@ -14,7 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\MarkdownEditor;
-
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -53,18 +53,24 @@ class BlogResource extends Resource
                 TextInput::make('slug')
                     ->required()
                     ->maxLength(255),
-
+                TagsInput::make('tag')->required()
+                    ->hint("Masukkan Setidaknya 3 tag")
+                    ->nestedRecursiveRules([
+                        'min:3',
+                        'max:255',
+                    ]),
                 Select::make('category')
+                    ->required()
+                    ->searchable()
                     ->multiple()
                     ->relationship(name: 'categories', titleAttribute: 'category_name')
                     ->createOptionForm([
                         TextInput::make('category_name')
                             ->required(),
-                    ]),
+                    ])->columnSpanFull(),
 
 
-
-                FileUpload::make('image')
+                FileUpload::make('img')
                     ->label("Main Image For Blog")
                     ->image()
                     ->disk('public')
@@ -75,6 +81,9 @@ class BlogResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
+                TextInput::make('author')
+                    ->required()
+                    ->maxLength(255)->columnSpanFull(),
                 Section::make('Publishing')
                     ->description('Settings for publishing this post.')
                     ->schema([
