@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BlogResource\Pages;
 use Filament\Forms\Get;
 use Illuminate\Support\Str;
-
 use App\Models\Blog;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Section;
@@ -53,7 +52,6 @@ class BlogResource extends Resource
                 TagsInput::make('tag')->required()
                     ->hint("Masukkan Setidaknya 3 tag")
                     ->nestedRecursiveRules([
-                        'min:3',
                         'max:255',
                     ]),
                 Select::make('category')
@@ -117,8 +115,7 @@ class BlogResource extends Resource
                 TextColumn::make('title'),
                 TextColumn::make('author'),
                 TextColumn::make('categories.category_name'),
-                TextColumn::make('pic.username')->label("Created By"),
-                TextColumn::make('pic')->label("PIC ID"),
+                TextColumn::make('createdBy.name')->label("Created By"),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -126,7 +123,12 @@ class BlogResource extends Resource
                         'reviewing' => 'warning',
                         'published' => 'success',
                         'rejected' => 'danger',
-                    }),
+                    })->icons([
+                        'heroicon-o-x',
+                        'heroicon-o-document' => static fn($state): bool => $state === 'draft',
+                        'heroicon-o-refresh' => static fn($state): bool => $state === 'reviewing',
+                        'heroicon-o-truck' => static fn($state): bool => $state === 'published',
+                    ]),
 
                 TextColumn::make('created_at')
                     ->since()
@@ -145,13 +147,13 @@ class BlogResource extends Resource
                 Tables\Actions\DeleteAction::make()->after(function (Blog $record) {
                     // delete single
                     if ($record->img) {
-                       Storage::disk('public')->delete($record->img);
+                        Storage::disk('public')->delete($record->img);
                     }
                     // delete multiple
                     if ($record->galery) {
-                       foreach ($record->galery as $ph) Storage::disk('public')->delete($ph);
+                        foreach ($record->galery as $ph) Storage::disk('public')->delete($ph);
                     }
-                 }),
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -165,6 +167,7 @@ class BlogResource extends Resource
         return [
             //
             // CategoriesRelationManager::class
+        
         ];
     }
 

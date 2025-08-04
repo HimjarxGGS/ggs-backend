@@ -24,8 +24,8 @@ class Blog extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function pic() : BelongsTo{
-        return $this->belongsTo(User::class);
+    public function createdBy() : BelongsTo{
+        return $this->belongsTo(User::class, 'pic');
     }
 
     protected $casts = [
