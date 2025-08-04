@@ -13,7 +13,6 @@ use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -25,7 +24,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Container\Attributes\Auth;
+
 
 class BlogResource extends Resource
 {
@@ -104,9 +103,7 @@ class BlogResource extends Resource
                         DateTimePicker::make('date_published_at')
                             ->hidden(fn(Get $get) => $get('status') !== 'published'),
                     ]),
-                TextInput::make('pic')->required(
-                    fn(): string => Filament::auth()->id()
-                ),
+                TextInput::make('pic')->required()->default(fn() => Filament::auth()->user()->id)->hidden(),
 
 
             ]);

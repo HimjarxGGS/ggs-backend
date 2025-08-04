@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\EditProfile;
 use App\Filament\Auth\Login;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -17,6 +18,7 @@ use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Filament\Facades\Filament;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -29,12 +31,14 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->authGuard('web')
+            // ->brandName(fn() =>Filament::auth()->user()->name)
             ->brandName("Green Generation Surabaya")
             ->brandLogoHeight(50)
             // ->brandLogo(asset('storage/images/ggs_logo.png'))
             ->path('')
-
             ->login(Login::class)
+            ->profile(EditProfile::class)
+            ->passwordReset()
             ->sidebarFullyCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::hex("#34C759"),
