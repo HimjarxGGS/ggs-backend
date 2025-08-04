@@ -19,11 +19,12 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Forms\Set;
 use Filament\Tables;
-use Filament\Support\Enums\Alignment;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-
+use Illuminate\Database\Eloquent\Builder;
 
 class BlogResource extends Resource
 {
@@ -31,7 +32,7 @@ class BlogResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static $formActionsAlignment = Alignment::Right;
+    // protected static $formActionsAlignment = Alignment::Right;
 
     public static function form(Form $form): Form
     {
@@ -107,15 +108,16 @@ class BlogResource extends Resource
             ]);
     }
 
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 ImageColumn::make('img'),
-                TextColumn::make('title'),
-                TextColumn::make('author'),
-                TextColumn::make('categories.category_name'),
-                TextColumn::make('createdBy.name')->label("Created By"),
+                TextColumn::make('title')->searchable(),
+                TextColumn::make('author')->searchable(),
+                TextColumn::make('categories.category_name')->searchable(),
+                TextColumn::make('createdBy.name')->label("Created By")->searchable(),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -128,7 +130,7 @@ class BlogResource extends Resource
                         'heroicon-o-document' => static fn($state): bool => $state === 'draft',
                         'heroicon-o-refresh' => static fn($state): bool => $state === 'reviewing',
                         'heroicon-o-truck' => static fn($state): bool => $state === 'published',
-                    ]),
+                    ])->searchable(),
 
                 TextColumn::make('created_at')
                     ->since()
@@ -140,7 +142,16 @@ class BlogResource extends Resource
             ])
             ->filters([
                 //
+                Filter::make('published')->query(fn(Builder $query): Builder => $query->where('status', 'published')),
+                Filter::make('draft')->query(fn(Builder $query): Builder => $query->where('status', 'draft')),
+                Filter::make('reviewing')->query(fn(Builder $query): Builder => $query->where('status', 'reviewing')),
             ])
+            ->filtersTriggerAction(
+                fn(Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
+            ->persistFiltersInSession()
             ->actions([
                 // Table\Actions\::make().
                 Tables\Actions\EditAction::make(),
@@ -167,7 +178,7 @@ class BlogResource extends Resource
         return [
             //
             // CategoriesRelationManager::class
-        
+
         ];
     }
 
