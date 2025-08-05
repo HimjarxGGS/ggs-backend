@@ -99,8 +99,11 @@ class BlogResource extends Resource
                                 'reviewing' => 'Reviewing',
                                 'published' => 'Published',
                             ])->required()->live(),
-                        DateTimePicker::make('date_published_at')
-                            ->hidden(fn(Get $get) => $get('status') !== 'published'),
+                        DateTimePicker::make('published_at')
+                            ->hidden(fn(Get $get) => $get('status') !== 'published')
+                            ->default(
+                                now()
+                            ) ->timezone('Asia/Jakarta')->native(false)->closeOnDateSelection(),
                     ]),
                 TextInput::make('pic')->required()->default(fn() => Filament::auth()->user()->id)->hidden(),
 
