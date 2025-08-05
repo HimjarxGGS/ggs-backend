@@ -7,6 +7,7 @@ use Filament\Panel;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -22,15 +23,16 @@ class User extends Authenticatable implements FilamentUser
      * @var list<string>
      */
 
-     public function canAccessPanel(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return $this->role === 'admin';
     }
 
-    public function blogs() : HasMany{
+    public function blogs(): HasMany
+    {
         return $this->hasMany(Blog::class);
     }
- 
+
     protected $fillable = [
         'name',
         'username',
@@ -58,5 +60,22 @@ class User extends Authenticatable implements FilamentUser
         return [
             'password' => 'hashed',
         ];
+    }
+
+    // app/Models/User.php
+
+    public function approvedPendaftarEvents(): HasMany
+    {
+        return $this->hasMany(PendaftarEvent::class, 'approved_by');
+    }
+
+    public function pendaftar(): HasOne
+    {
+        return $this->hasOne(Pendaftar::class);
+    }
+
+    public function getIsGuestAttribute(): bool
+    {
+        return is_null($this->user_id);
     }
 }
