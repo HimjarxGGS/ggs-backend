@@ -10,6 +10,8 @@ class PendaftarEvent extends Model
     //
     // app/Models/PendaftarEvent.php
 
+    protected $primaryKey = 'id';
+
     protected $with = ['pendaftar'];
 
     public function pendaftar(): BelongsTo
