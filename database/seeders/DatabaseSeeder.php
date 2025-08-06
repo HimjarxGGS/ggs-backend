@@ -29,6 +29,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'member'
         ]);
 
-        // Event::fact
+        Event::factory(10)->create();
     }
 }
