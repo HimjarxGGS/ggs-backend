@@ -9,7 +9,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Event extends Model
 {
     use HasFactory;
-    //
+
+    protected $fillable = [
+        'name',
+        'description',
+        'event_date',
+        'status',
+        'event_format',
+        'location',
+        'poster',
+    ];
+
+    
     public function dokumentasi(): HasMany
     {
         return $this->hasMany(DokumentasiEvent::class);

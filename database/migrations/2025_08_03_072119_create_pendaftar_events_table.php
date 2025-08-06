@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pendaftar_events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('approved_by')->constrained('users');
+            $table->foreignId('approved_by')->nullable()->default(null)->constrained('users')->nullOnDelete();
             $table->foreignId('event_id')->constrained('events');
             $table->foreignId('pendaftar_id')->constrained('pendaftars');
             $table->string('bukti_payment');

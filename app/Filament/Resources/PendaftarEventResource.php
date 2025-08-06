@@ -20,17 +20,16 @@ class PendaftarEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // app/Filament/Resources/PendaftarEventResource.php
-
-
     public static function getEloquentQuery(): Builder
     {
         // Base pivot query grouped by event_id
         return parent::getEloquentQuery()
-            ->select('event_id')
-            ->selectRaw('COUNT(*) AS pendaftar_count')
-            ->groupBy('event_id')
-            ->with('event'); // eager-load event relation
+        ->select('id')
+        ->selectRaw('COUNT(*) AS pendaftar_count')
+        ->groupBy('id')
+        ->with('event') // eager-load event relation
+        ->reorder(); // this disables default ordering
+        
     }
 
     public static function canCreate(): bool
@@ -67,6 +66,10 @@ class PendaftarEventResource extends Resource
                 ->sortable()
                 ->searchable(),
 
+                TextColumn::make('event.id')
+                ->label('Event ID')
+                ->sortable()
+                ->searchable(),
             TextColumn::make('event.date')
                 ->label('Date')
                 ->date()
@@ -92,11 +95,11 @@ class PendaftarEventResource extends Resource
         ->actions([
             Action::make('viewRegistrants')
                 ->label('View Registrants')
-                ->icon('heroicon-o-eye')
-                ->url(fn ($record) => route(
-                    'filament.admin.resources.pendaftar-event-resource.pages.list-pendaftar-events',
-                    ['event_id' => $record->event_id]
-                )),
+                ->icon('heroicon-o-eye'),
+                // ->url(fn ($record) => route(
+                //     // 'filament.admin.resources.pendaftar-event-resource.pages.list-pendaftar-events',
+                //     ['event_id' => $record->event_id]
+                // )),
         ])
         ->searchable();
         // return $table
