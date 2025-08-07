@@ -29,5 +29,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Event::factory(10)->create();
+         $this->call(UserSeeder::class);
     }
 }
