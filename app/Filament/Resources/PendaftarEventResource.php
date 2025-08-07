@@ -20,13 +20,8 @@ use Filament\Tables\Table;
 class PendaftarEventResource extends Resource
 {
     protected static ?string $model = PendaftarEvent::class;
-
     protected static bool   $shouldRegisterNavigation = true;
-
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-
     public static function canCreate(): bool
     {
         return false;
@@ -63,12 +58,10 @@ class PendaftarEventResource extends Resource
                         TextColumn::make('name')->label('Event')->sortable()->searchable()->lineClamp(2)->wrap(),
                         TextColumn::make('date')->label('Date')->date()->sortable(),
                         TextColumn::make('status')->badge()
-                        ->color(fn(string $state): string => match ($state) {
-                            
-                            'finished' => 'warning',
-                            'active' => 'success',
-                            
-                        })->label('Status')->sortable(),
+                            ->color(fn(string $state): string => match ($state) {
+                                'finished' => 'success',
+                                'active' => 'warning',
+                            })->label('Status')->sortable(),
                         TextColumn::make('pendaftar_events_count')
                             ->label('Registrants')
                             ->counts('pendaftarEvents')
@@ -77,7 +70,11 @@ class PendaftarEventResource extends Resource
                     : [
                         TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->sortable()->searchable(),
                         TextColumn::make('pendaftar.email')->label('Email')->sortable()->searchable(),
-                        TextColumn::make('status')->label('Registration Status')->badge(),
+                        TextColumn::make('status')->label('Registration Status')->badge()
+                        ->color(fn(string $state): string => match ($state) {
+                            'verified' => 'success',
+                            'pending' => 'warning',
+                        })->sortable(),
                     ]
             )
 
@@ -95,13 +92,12 @@ class PendaftarEventResource extends Resource
                             ->options(['pending' => 'Pending', 'verified' => 'Verified']),
                     ]
             )
-
             // Actions
             ->actions(
                 $isEventList
                     ? [
                         Action::make('viewRegistrants')
-                            ->label('View Registrants')
+                            ->label('Lihat Data Pendaftar')
                             ->icon('heroicon-o-user-group')
                             ->url(fn($record) => route(
                                 'filament.admin.resources.pendaftar-events.index',
