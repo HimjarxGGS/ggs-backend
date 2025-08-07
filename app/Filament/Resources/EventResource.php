@@ -40,7 +40,7 @@ class EventResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->label('Event')->lineClamp(2)->wrap(),
-                TextColumn::make('date')->label('Date')->date(),
+                TextColumn::make('event_date')->label('Date')->date(),
 
                 TextColumn::make('status')
                 ->badge()

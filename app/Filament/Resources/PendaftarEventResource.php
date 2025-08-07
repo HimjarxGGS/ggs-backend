@@ -56,7 +56,7 @@ class PendaftarEventResource extends Resource
                 $isEventList
                     ? [
                         TextColumn::make('name')->label('Event')->sortable()->searchable()->lineClamp(2)->wrap(),
-                        TextColumn::make('date')->label('Date')->date()->sortable(),
+                        TextColumn::make('event_date')->label('Date')->date()->sortable(),
                         TextColumn::make('status')->badge()
                             ->color(fn(string $state): string => match ($state) {
                                 'finished' => 'success',
@@ -105,9 +105,9 @@ class PendaftarEventResource extends Resource
                             )),
                     ]
                     : [
-                        Action::make('back')
-                            ->label('← Back to Events')
-                            ->url(route('filament.admin.resources.pendaftar-events.index')),
+                        // Action::make('back')
+                        //     ->label('← Back to Events')
+                        //     ->url(route('filament.admin.resources.pendaftar-events.index')),
                     ]
             );
     }
