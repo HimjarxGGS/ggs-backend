@@ -71,10 +71,15 @@ class PendaftarEventResource extends Resource
                         TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->sortable()->searchable(),
                         TextColumn::make('pendaftar.email')->label('Email')->sortable()->searchable(),
                         TextColumn::make('status')->label('Registration Status')->badge()
-                        ->color(fn(string $state): string => match ($state) {
-                            'verified' => 'success',
-                            'pending' => 'warning',
-                        })->sortable(),
+                            ->color(fn(string $state): string => match ($state) {
+                                'verified' => 'success',
+                                'pending' => 'warning',
+                            })->sortable(),
+                        TextColumn::make('pendaftar.user_id')
+                            ->label('Type')
+                            ->formatStateUsing(fn($state) => $state ? 'Member' : 'Guest')
+                            ->badge()
+                            ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary'),
                     ]
             )
 
@@ -105,10 +110,19 @@ class PendaftarEventResource extends Resource
                             )),
                     ]
                     : [
-                        // Action::make('back')
-                        //     ->label('← Back to Events')
-                        //     ->url(route('filament.admin.resources.pendaftar-events.index')),
+                        Action::make('detail')
+                            ->label('Detail'), // TODO to detail pendaftar
                     ]
+            )->headerActions(
+                $isEventList
+                    ? [
+                        Action::make('photoFolders')
+                            ->label('Folder Foto')
+                            ->icon('heroicon-o-photo')
+                            ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
+                            ->url(fn(): string => route('filament.admin.resources.photo-gallery.index'))
+                    ]
+                    : []
             );
     }
 

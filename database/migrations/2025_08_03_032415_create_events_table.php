@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('event_format', ['online', 'offline'])->default('offline');
             $table->string('location');
             $table->string('poster');
+            $table->enum('need_registrant_picture', ['ya', 'tidak'])->default('tidak');
             $table->timestamps();
         });
     }
