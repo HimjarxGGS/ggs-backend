@@ -113,8 +113,8 @@ class PendaftarEventResource extends Resource
                             )),
                     ]
                     : [
-                        Action::make('detail')
-                            ->label('Detail'), // TODO to detail pendaftar
+                        // Action::make('detail')
+                        //     ->label('Detail'), // TODO to detail pendaftar
                     ]
             )->headerActions(
                 $isEventList
@@ -124,7 +124,6 @@ class PendaftarEventResource extends Resource
                             ->label('Folder Foto')
                             ->icon('heroicon-o-photo')
                             ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
-
                             ->url(fn($record): string => PhotoGallery::getUrl([
                                 'event_id' => request()->has('event_id'),
                             ])),

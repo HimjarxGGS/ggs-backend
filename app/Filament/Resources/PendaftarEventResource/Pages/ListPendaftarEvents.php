@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 
 class ListPendaftarEvents extends ListRecords
 {
+  
     protected static string $resource = PendaftarEventResource::class;
 
     public function isEventList(): bool
@@ -30,4 +31,15 @@ class ListPendaftarEvents extends ListRecords
         $event = Event::find(request()->query('event_id'));
         return 'Data Pendaftar ' . ($event?->name ?? 'Unknown Event');
     }
+
+    public function getBreadcrumbs(): array
+    {
+        return $this->isEventList() ? [
+            route('filament.admin.resources.pendaftar-events.index') => 'Event',
+        ] : [
+            route('filament.admin.resources.pendaftar-events.index') => 'Event',
+            route('filament.admin.resources.pendaftar-events.index', ['event_id' => request()->query('event_id')]) => 'Pendaftar',
+        ];
+    }
+
 }
