@@ -21,58 +21,69 @@ class MemberResource extends Resource
     protected static ?string $navigationLabel = 'Member';
     protected static ?string $pluralModelLabel = 'Data Member';
 
+    // Detect current page for form context
+    protected static function isViewPage(): bool
+    {
+        return request()->routeIs('filament.admin.resources.members.view');
+    }
+
     public static function form(Form $form): Form
     {
+        $isView = self::isViewPage();
+
         return $form
             ->schema([
                 Section::make('Informasi Akun')
                     ->schema([
                         TextInput::make('username')
                             ->label('Username')
-                            ->disabled(),
+                            ->disabled($isView),
+                        
                         TextInput::make('email')
                             ->label('Email')
-                            ->disabled(),
+                            ->disabled($isView),
+                        
                         DateTimePicker::make('created_at')
                             ->label('Tanggal Bergabung')
-                            ->disabled(),
+                            ->disabled($isView),
                     ]),
 
                 Section::make('Informasi Pribadi')
                     ->schema([
                         TextInput::make('pendaftar.nama_lengkap')
                             ->label('Nama Lengkap')
-                            ->default(fn ($record) => $record?->pendaftar?->nama_lengkap)
-                            ->disabled(),
+                            ->default(fn($record) => $record?->pendaftar?->nama_lengkap)
+                            ->disabled($isView),
 
                         TextInput::make('pendaftar.no_telepon')
                             ->label('Nomor Telepon')
-                            ->default(fn ($record) => $record?->pendaftar?->no_telepon)
-                            ->disabled(),
+                            ->default(fn($record) => $record?->pendaftar?->no_telepon)
+                            ->disabled($isView),
 
                         TextInput::make('pendaftar.asal_instansi')
                             ->label('Asal Instansi')
-                            ->default(fn ($record) => $record?->pendaftar?->asal_instansi)
-                            ->disabled(),
+                            ->default(fn($record) => $record?->pendaftar?->asal_instansi)
+                            ->disabled($isView),
 
                         TextInput::make('pendaftar.date_of_birth')
                             ->label('Tanggal Lahir')
-                            ->default(fn ($record) => $record?->pendaftar?->date_of_birth)
-                            ->disabled(),
+                            ->default(fn($record) => $record?->pendaftar?->date_of_birth)
+                            ->disabled($isView),
 
                         TextInput::make('usia')
                             ->label('Usia')
-                            ->default(fn ($record) =>
-                                $record?->pendaftar?->date_of_birth
-                                    ? now()->diffInYears($record->pendaftar->date_of_birth)
-                                    : '-'
+                            ->default(
+                                fn($record) =>
+                                    $record?->pendaftar?->date_of_birth
+                                        ? now()->diffInYears($record->pendaftar->date_of_birth)
+                                        : '-'
                             )
-                            ->disabled(),
+                            ->disabled(), 
 
                         TextInput::make('pendaftar.riwayat_penyakit')
                             ->label('Riwayat Penyakit')
-                            ->default(fn ($record) => $record?->pendaftar?->riwayat_penyakit)
-                            ->disabled(),
+                            ->default(fn($record) => $record?->pendaftar?->riwayat_penyakit)
+                            ->disabled($isView),
                     ]),
             ]);
     }
@@ -105,12 +116,10 @@ class MemberResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Lihat Data'),
-                // Tables\Actions\EditAction::make(), 
+                Tables\Actions\EditAction::make()->label('Ubah Data'),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                // 
             ]);
     }
 
@@ -130,6 +139,8 @@ class MemberResource extends Resource
     {
         return [
             'index' => Pages\ListMembers::route('/'),
+            'create' => Pages\CreateMember::route('/create'),
+            'edit' => Pages\EditMember::route('/{record}/edit'),
             'view' => Pages\ViewMember::route('/{record}'),
         ];
     }
