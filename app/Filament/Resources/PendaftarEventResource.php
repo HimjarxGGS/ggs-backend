@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PendaftarEventResource\Pages;
 use App\Filament\Resources\PendaftarEventResource\Pages\ListPendaftarEvents;
+use App\Filament\Resources\PendaftarEventResource\Pages\PhotoGallery;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -115,14 +116,17 @@ class PendaftarEventResource extends Resource
                     ]
             )->headerActions(
                 $isEventList
-                    ? [
+                    ? []
+                    : [
                         Action::make('photoFolders')
                             ->label('Folder Foto')
                             ->icon('heroicon-o-photo')
                             ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
-                            ->url(fn(): string => route('filament.admin.resources.photo-gallery.index'))
+
+                            ->url(fn($record): string => PhotoGallery::getUrl([
+                                'event_id' => request()->has('event_id'),
+                            ])),
                     ]
-                    : []
             );
     }
 
@@ -130,6 +134,7 @@ class PendaftarEventResource extends Resource
     {
         return [
             'index' => Pages\ListPendaftarEvents::route('/'),
+            'photo-gallery'   => Pages\PhotoGallery::route('/photo-gallery'),
         ];
     }
 }
