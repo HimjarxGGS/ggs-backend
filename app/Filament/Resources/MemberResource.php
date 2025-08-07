@@ -13,12 +13,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Section;
 
-
 class MemberResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    // 3. Pengaturan Navigasi Sidebar
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Member';
     protected static ?string $pluralModelLabel = 'Data Member';
@@ -29,23 +27,52 @@ class MemberResource extends Resource
             ->schema([
                 Section::make('Informasi Akun')
                     ->schema([
-                        TextInput::make('username')->label('Username')->disabled(),
-                        TextInput::make('email')->label('Email')->disabled(),
-                        DateTimePicker::make('created_at')->label('Tanggal Bergabung')->disabled(),
+                        TextInput::make('username')
+                            ->label('Username')
+                            ->disabled(),
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->disabled(),
+                        DateTimePicker::make('created_at')
+                            ->label('Tanggal Bergabung')
+                            ->disabled(),
                     ]),
 
                 Section::make('Informasi Pribadi')
                     ->schema([
-                        TextInput::make('pendaftar.nama_lengkap')->label('Nama Lengkap')->disabled(),
-                        TextInput::make('pendaftar.no_telepon')->label('Nomor Telepon')->disabled(),
-                        TextInput::make('pendaftar.asal_instansi')->label('Asal Instansi')->disabled(),
-                        TextInput::make('pendaftar.date_of_birth')->label('Tanggal Lahir')->disabled(),
-                        TextInput::make('usia')->label('Usia')->default(function ($record) {
-                            return optional($record->pendaftar)->date_of_birth
-                                ? now()->diffInYears($record->pendaftar->date_of_birth)
-                                : '-';
-                        })->disabled(),
-                        TextInput::make('pendaftar.riwayat_penyakit')->label('Riwayat Penyakit')->disabled(),
+                        TextInput::make('pendaftar.nama_lengkap')
+                            ->label('Nama Lengkap')
+                            ->default(fn ($record) => $record?->pendaftar?->nama_lengkap)
+                            ->disabled(),
+
+                        TextInput::make('pendaftar.no_telepon')
+                            ->label('Nomor Telepon')
+                            ->default(fn ($record) => $record?->pendaftar?->no_telepon)
+                            ->disabled(),
+
+                        TextInput::make('pendaftar.asal_instansi')
+                            ->label('Asal Instansi')
+                            ->default(fn ($record) => $record?->pendaftar?->asal_instansi)
+                            ->disabled(),
+
+                        TextInput::make('pendaftar.date_of_birth')
+                            ->label('Tanggal Lahir')
+                            ->default(fn ($record) => $record?->pendaftar?->date_of_birth)
+                            ->disabled(),
+
+                        TextInput::make('usia')
+                            ->label('Usia')
+                            ->default(fn ($record) =>
+                                $record?->pendaftar?->date_of_birth
+                                    ? now()->diffInYears($record->pendaftar->date_of_birth)
+                                    : '-'
+                            )
+                            ->disabled(),
+
+                        TextInput::make('pendaftar.riwayat_penyakit')
+                            ->label('Riwayat Penyakit')
+                            ->default(fn ($record) => $record?->pendaftar?->riwayat_penyakit)
+                            ->disabled(),
                     ]),
             ]);
     }
@@ -58,19 +85,23 @@ class MemberResource extends Resource
                     ->label('Created At')
                     ->dateTime('d M Y')
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('username')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('pendaftar.nama_lengkap')
                     ->label('Nama Lengkap')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('pendaftar.no_telepon')
                     ->label('Nomor Telepon')
                     ->searchable(),
             ])
             ->filters([
-                //
+                // 
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Lihat Data'),
@@ -91,7 +122,7 @@ class MemberResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // 
         ];
     }
 
