@@ -21,7 +21,6 @@ class MemberResource extends Resource
     protected static ?string $navigationLabel = 'Member';
     protected static ?string $pluralModelLabel = 'Data Member';
 
-    // Detect current page for form context
     protected static function isViewPage(): bool
     {
         return request()->routeIs('filament.admin.resources.members.view');
