@@ -38,6 +38,8 @@ class PendaftarEventResource extends Resource
         return false;
     }
 
+    // protected bool $isEventList = false;
+
     public static function table(Table $table): Table
     {
         $isEventList = ! request()->has('event_id');
@@ -129,6 +131,22 @@ class PendaftarEventResource extends Resource
                     ]
             );
     }
+
+    // protected function getHeaderActions(): array
+    // {
+    //     return $this->isEventList
+    //         ? []
+    //         : [
+    //             Action::make('photoFolders')
+    //                 ->label('Folder Foto')
+    //                 ->icon('heroicon-o-photo')
+    //                 ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
+
+    //                 ->url(fn($record): string => PhotoGallery::getUrl([
+    //                     'event_id' => request()->has('event_id'),
+    //                 ])),
+    //         ];
+    // }
 
     public static function getPages(): array
     {
