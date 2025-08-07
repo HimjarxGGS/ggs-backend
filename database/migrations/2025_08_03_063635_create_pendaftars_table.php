@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('asal_instansi');
             $table->string('no_telepon');
             $table->string('riwayat_penyakit');
+            $table->string('registrant_picture')->nullable();
             $table->timestamps();
         });
     }
