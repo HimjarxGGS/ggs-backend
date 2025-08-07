@@ -11,6 +11,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Section;
+
 
 class MemberResource extends Resource
 {
@@ -25,21 +27,26 @@ class MemberResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('username')
-                    ->disabled(),
-                TextInput::make('email')
-                    ->email()
-                    ->disabled(),
-                // Mengambil data dari relasi 'pendaftar'
-                TextInput::make('pendaftar.nama_lengkap')
-                    ->label('Nama Lengkap')
-                    ->disabled(),
-                TextInput::make('pendaftar.no_telepon')
-                    ->label('Nomor Telepon')
-                    ->disabled(),
-                DateTimePicker::make('created_at')
-                    ->label('Tanggal Bergabung')
-                    ->disabled(),
+                Section::make('Informasi Akun')
+                    ->schema([
+                        TextInput::make('username')->label('Username')->disabled(),
+                        TextInput::make('email')->label('Email')->disabled(),
+                        DateTimePicker::make('created_at')->label('Tanggal Bergabung')->disabled(),
+                    ]),
+
+                Section::make('Informasi Pribadi')
+                    ->schema([
+                        TextInput::make('pendaftar.nama_lengkap')->label('Nama Lengkap')->disabled(),
+                        TextInput::make('pendaftar.no_telepon')->label('Nomor Telepon')->disabled(),
+                        TextInput::make('pendaftar.asal_instansi')->label('Asal Instansi')->disabled(),
+                        TextInput::make('pendaftar.date_of_birth')->label('Tanggal Lahir')->disabled(),
+                        TextInput::make('usia')->label('Usia')->default(function ($record) {
+                            return optional($record->pendaftar)->date_of_birth
+                                ? now()->diffInYears($record->pendaftar->date_of_birth)
+                                : '-';
+                        })->disabled(),
+                        TextInput::make('pendaftar.riwayat_penyakit')->label('Riwayat Penyakit')->disabled(),
+                    ]),
             ]);
     }
 
