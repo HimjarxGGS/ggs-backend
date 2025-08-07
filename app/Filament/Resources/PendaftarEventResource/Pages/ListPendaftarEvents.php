@@ -130,10 +130,10 @@ class ListPendaftarEvents extends ListRecords
     public function getTitle(): string
     {
         if ($this->isEventList()) {
-            return 'Daftar Event';
+            return 'Data Event';
         }
 
         $event = Event::find(request()->query('event_id'));
-        return 'Registrants for: ' . ($event?->name ?? 'Unknown Event');
+        return 'Data Pendaftar ' . ($event?->name ?? 'Unknown Event');
     }
 }
