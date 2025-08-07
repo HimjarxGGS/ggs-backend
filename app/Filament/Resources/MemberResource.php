@@ -115,7 +115,7 @@ class MemberResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Lihat Data'),
-                Tables\Actions\EditAction::make()->label('Ubah Data'),
+                // Tables\Actions\EditAction::make()->label('Ubah Data'),
             ])
             ->bulkActions([
                 // 
