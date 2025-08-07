@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'verified'])->default('pending');
             $table->enum('kesediaan_hadir', ['ya', 'tidak'])->default('ya');
             $table->enum('kesediaan_menaati_aturan', ['ya', 'tidak'])->default('ya');
-            $table->string('registrant_picture')->nullable();
+            // $table->string('registrant_picture')->nullable();
             $table->timestamps();
         });
     }

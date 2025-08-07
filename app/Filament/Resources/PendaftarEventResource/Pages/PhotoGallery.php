@@ -7,6 +7,7 @@ use App\Models\Event;
 use Filament\Actions\Action;
 use Illuminate\Support\Str;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class PhotoGallery extends Page
@@ -44,6 +45,37 @@ class PhotoGallery extends Page
     }
 
 
+protected function getHeaderActions(): array
+{
+    return [
+
+        Action::make('Download Semua Foto')
+            ->icon('heroicon-m-arrow-down-tray')
+            ->action(function () {
+                // Collect paths of all registrant photos
+                $files = \App\Models\PendaftarEvent::whereNotNull('photo_path')
+                    ->pluck('photo_path')
+                    ->map(function ($path) {
+                        return Storage::path($path); // Absolute path
+                    });
+
+                $zipFileName = 'registrant_photos.zip';
+                $zipFilePath = storage_path("app/{$zipFileName}");
+
+                $zip = new ZipArchive;
+                if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                    foreach ($files as $file) {
+                        $zip->addFile($file, basename($file));
+                    }
+                    $zip->close();
+                }
+
+                return response()->download($zipFilePath)->deleteFileAfterSend(true);
+            })
+            ->color('primary')
+    ];
+}
+
     // protected function getHeaderActions(): array
     // {
     //     return [
@@ -78,5 +110,19 @@ class PhotoGallery extends Page
     public function getTitle(): string
     {
         return 'Foto Pendaftar';
+    }
+
+    // public function getBreadcrumb(): ?string
+    // {
+    //     return 'Kembali ke Event'; // This appears in the breadcrumb
+    // }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.resources.pendaftar-events.index') => 'Event',
+            route('filament.admin.resources.pendaftar-events.index', ['event_id' => request()->query('event_id')]) => 'Pendaftar',
+            route('filament.admin.resources.pendaftar-events.photo-gallery') => 'Foto pendaftar',
+        ];
     }
 }

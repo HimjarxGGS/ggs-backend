@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pendaftars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->nullable()->default(null);
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete()->default(null);
             $table->string('nama_lengkap');
             $table->date('date_of_birth');
             $table->string('email');
