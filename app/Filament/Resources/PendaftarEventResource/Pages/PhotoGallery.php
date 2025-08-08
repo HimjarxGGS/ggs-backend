@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PendaftarEventResource\Pages;
 
 use App\Filament\Resources\PendaftarEventResource;
 use App\Models\Event;
+use App\Models\Pendaftar;
 use Filament\Actions\Action;
 use Illuminate\Support\Str;
 use Filament\Resources\Pages\Page;
@@ -35,9 +36,10 @@ class PhotoGallery extends Page
 
         if (filled($this->search)) {
             $term = strtolower($this->search);
-            $query = $query->filter(fn($p) =>
+            $query = $query->filter(
+                fn($p) =>
                 Str::contains(strtolower($p->nama_lengkap), $term) ||
-                Str::contains(strtolower(basename($p->registrant_picture)), $term)
+                    Str::contains(strtolower(basename($p->registrant_picture)), $term)
             );
         }
 
@@ -45,36 +47,37 @@ class PhotoGallery extends Page
     }
 
 
-protected function getHeaderActions(): array
-{
-    return [
+    protected function getHeaderActions(): array
+    {
+        return [
 
-        Action::make('Download Semua Foto')
-            ->icon('heroicon-m-arrow-down-tray')
-            ->action(function () {
-                // Collect paths of all registrant photos
-                $files = \App\Models\PendaftarEvent::whereNotNull('photo_path')
-                    ->pluck('photo_path')
-                    ->map(function ($path) {
-                        return Storage::path($path); // Absolute path
-                    });
+            Action::make('Download Semua Foto')
+                ->icon('heroicon-m-arrow-down-tray')
+                ->action(function () {
+                    $this->downloadAll();
+                    // Collect paths of all registrant photos
+                    // $files = Pendaftar::where('id', )->whereNotNull('registrant_picture')
+                    //     ->pluck('registrant_picture')
+                    //     ->map(function ($path) {
+                    //         return Storage::path($path); // Absolute path
+                    //     });
 
-                $zipFileName = 'registrant_photos.zip';
-                $zipFilePath = storage_path("app/{$zipFileName}");
+                    // $zipFileName = 'registrant_photos.zip';
+                    // $zipFilePath = storage_path("app/{$zipFileName}");
 
-                $zip = new ZipArchive;
-                if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-                    foreach ($files as $file) {
-                        $zip->addFile($file, basename($file));
-                    }
-                    $zip->close();
-                }
+                    // $zip = new ZipArchive;
+                    // if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                    //     foreach ($files as $file) {
+                    //         $zip->addFile($file, basename($file));
+                    //     }
+                    //     $zip->close();
+                    // }
 
-                return response()->download($zipFilePath)->deleteFileAfterSend(true);
-            })
-            ->color('primary')
-    ];
-}
+                    // return response()->download($zipFilePath)->deleteFileAfterSend(true);
+                })
+                ->color('primary')
+        ];
+    }
 
     // protected function getHeaderActions(): array
     // {
@@ -85,26 +88,40 @@ protected function getHeaderActions(): array
 
     public function downloadAll()
     {
+        $zipFileName = 'registrant_photos.zip';
+        $zipPath = storage_path("app/public/{$zipFileName}");
         // create a temporary file
-        $zipPath = storage_path('app/temp/pendaftar-photos-'.$this->event->id.'.zip');
-        @unlink($zipPath);
+        // $zipPath = storage_path('app/temp/pendaftar-photos-' . $this->event->name[10] . '.zip');
+        // @unlink($zipPath);
 
-        $zip = new ZipArchive;
-        $zip->open($zipPath, ZipArchive::CREATE);
+        // $zip = new ZipArchive;
+        // // $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        // $zip->open($zipPath);
 
-        foreach ($this->getRegistrants() as $pendaftar) {
-            $filePath = storage_path('app/'.$pendaftar->registrant_picture);
-            if (file_exists($filePath)) {
-                // add the file with a friendly name
-                $zip->addFile($filePath, $pendaftar->nama_lengkap . '_' . basename($filePath));
-            }
+        // foreach ($this->getRegistrants() as $pendaftar) {
+        //     $filePath = storage_path($pendaftar->registrant_picture);
+        //     if (file_exists($filePath)) {
+        //         // if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+        //             $zip->addFile($filePath, $pendaftar->nama_lengkap . '_' . basename($filePath));
+        //             // $zip->close();
+        //         // }
+        //     }
+        // }
+
+
+        // //         // add the file with a friendly name
+        // // var_dump(asset('storage/images/ggs_logo.png'));
+        // // $zip->addFile(asset('storage/images/ggs_logo.png'));
+        if (Storage::disk('public')->exists('images/ggs_logo.png')) {
+            Storage::download('images/ggs_logo.png');
+            // abort(404, 'file not found.');
         }
-
-        $zip->close();
-
-        return response()
-            ->download($zipPath, 'gallery-event-'.$this->event->id.'.zip')
-            ->deleteFileAfterSend();
+        // $zip->close();
+        return Storage::download('images/ggs_logo.png');
+        // return response()
+        //     ->download(storage_path('images/ggs_logo.png'));
+            // ->download($zipPath, 'gallery-event-' . $this->event->id . '.zip')
+            // ->deleteFileAfterSend(); 
     }
 
     public function getTitle(): string
