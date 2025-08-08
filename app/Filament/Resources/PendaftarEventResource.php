@@ -12,13 +12,8 @@ use Filament\Tables\Table;
 class PendaftarEventResource extends Resource
 {
     protected static ?string $model = PendaftarEvent::class;
-
+    protected static bool   $shouldRegisterNavigation = true;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationLabel = 'Pendaftar Event';
-    protected static ?string $pluralModelLabel = 'Pendaftar Events';
-    protected static ?string $slug = 'pendaftar-events';
-
-    // permission surface — disable these if you don't want create/edit/delete in Filament panel
     public static function canCreate(): bool
     {
         return false;
