@@ -39,7 +39,7 @@ class PendaftarEventResource extends Resource
         return false;
     }
 
-    
+
 
     public static function table(Table $table): Table
     {
@@ -52,6 +52,10 @@ class PendaftarEventResource extends Resource
             ->where('event_id', request()->query('event_id'))
             ->with('pendaftar');
 
+        $selectedEvent = null;
+        if (!$isEventList) {
+            $selectedEvent = Event::find( request()->query('event_id'));
+        }
         return $table
             ->query($query)
 
@@ -82,7 +86,7 @@ class PendaftarEventResource extends Resource
                             ->badge()
                             ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary')
                             ->sortable(),
-                            
+
                         TextColumn::make('status')->label('Status')->badge()
                             ->color(fn(string $state): string => match ($state) {
                                 'verified' => 'success',
@@ -132,7 +136,7 @@ class PendaftarEventResource extends Resource
                         Action::make('photoFolders')
                             ->label('Folder Foto')
                             ->icon('heroicon-o-photo')
-                            ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
+                            ->visible(fn(): bool => $selectedEvent->need_registrant_picture === 'ya')
                             ->url(fn($record): string => PhotoGallery::getUrl([
                                 'event_id' => request()->has('event_id'),
                             ])),
