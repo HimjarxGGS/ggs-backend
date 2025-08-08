@@ -93,20 +93,6 @@ class PhotoGallery extends Page
             Action::make('search-inline')
                 ->view('filament.resources.pendaftar-event-resource.actions.search-inline'),
 
-            // ->action(function ($data) {
-            //     $this->search = $data['search'] ?? '';
-            // }),
-            // Action::make('search')
-            // ->label('')
-            // ->icon('heroicon-m-magnifying-glass')
-            // ->form([
-            //     TextInput::make('search')->reactive()->placeholder('Cari...'),
-            // ])
-            // ->action(function ($data) {
-            //     $this->search = $data['search'] ?? '';
-            // })
-            // ->button(),
-
             Action::make('Download Semua Foto')
                 ->icon('heroicon-m-arrow-down-tray')
                 ->action(function () {

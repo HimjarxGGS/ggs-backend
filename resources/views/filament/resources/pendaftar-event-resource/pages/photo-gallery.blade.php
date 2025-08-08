@@ -1,7 +1,6 @@
 <x-filament::page>
 
     {{-- Gallery grid --}}
-    <p>Search : {{ $this->search }}</p>
     <x-filament::grid
         style="--cols-lg: repeat(3, minmax(0, 1fr));"
         class="lg:grid-cols-[--cols-lg]">
