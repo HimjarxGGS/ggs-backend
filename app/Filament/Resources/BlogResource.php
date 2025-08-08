@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Set;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
