@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Set;
 use Filament\Tables;
 use Filament\Support\Enums\Alignment;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -82,9 +83,7 @@ class BlogResource extends Resource
                 RichEditor::make('content')
                     ->label("Blog Content")
                     ->required()
-
                     ->fileAttachmentsDirectory('attachments')
-                    ->maxLength(255)
                     ->columnSpanFull(),
                 TextInput::make('author')
                     ->required()
@@ -146,6 +145,7 @@ class BlogResource extends Resource
             ])
             ->actions([
                 // Table\Actions\::make().
+                ViewAction::make()->label("Lihat Data"),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()->after(function (Blog $record) {
                     // delete single

@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -38,11 +39,11 @@ class PendaftarEventResource extends Resource
         return false;
     }
 
-    // protected bool $isEventList = false;
+    
 
     public static function table(Table $table): Table
     {
-        $isEventList = ! request()->has('event_id');
+        $isEventList = !request()->has('event_id');
 
         // Swap the base query
         $query = $isEventList
@@ -73,16 +74,21 @@ class PendaftarEventResource extends Resource
                     : [
                         TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->sortable()->searchable(),
                         TextColumn::make('pendaftar.email')->label('Email')->sortable()->searchable(),
-                        TextColumn::make('status')->label('Registration Status')->badge()
-                            ->color(fn(string $state): string => match ($state) {
-                                'verified' => 'success',
-                                'pending' => 'warning',
-                            })->sortable(),
+                        TextColumn::make('created_at')->date()->label("Tanggal")->sortable()->searchable(),
+                        TextColumn::make('approvedBy.name')->label("Approved By")->searchable(),
                         TextColumn::make('pendaftar.user_id')
                             ->label('Type')
                             ->formatStateUsing(fn($state) => $state ? 'Member' : 'Guest')
                             ->badge()
-                            ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary'),
+                            ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary')
+                            ->sortable(),
+                            
+                        TextColumn::make('status')->label('Status')->badge()
+                            ->color(fn(string $state): string => match ($state) {
+                                'verified' => 'success',
+                                'pending' => 'warning',
+                            })->sortable(),
+
                     ]
             )
 
@@ -91,12 +97,12 @@ class PendaftarEventResource extends Resource
                 $isEventList
                     ? [
                         SelectFilter::make('status')
-                            ->label('Event Status')
+                            ->label('Status')
                             ->options(['active' => 'Active', 'finished' => 'Finished']),
                     ]
                     : [
                         SelectFilter::make('status')
-                            ->label('Registration Status')
+                            ->label('Status')
                             ->options(['pending' => 'Pending', 'verified' => 'Verified']),
                     ]
             )
@@ -113,8 +119,11 @@ class PendaftarEventResource extends Resource
                             )),
                     ]
                     : [
+                        ViewAction::make()->label('Lihat Data'),
                         // Action::make('detail')
-                        //     ->label('Detail'), // TODO to detail pendaftar
+                        //     ->label('Lihat Data')
+                        //     ->icon('heroicon-o-eye'),
+                        // ->url(fn($record) => {}), // TODO to detail pendaftar
                     ]
             )->headerActions(
                 $isEventList
@@ -131,21 +140,6 @@ class PendaftarEventResource extends Resource
             );
     }
 
-    // protected function getHeaderActions(): array
-    // {
-    //     return $this->isEventList
-    //         ? []
-    //         : [
-    //             Action::make('photoFolders')
-    //                 ->label('Folder Foto')
-    //                 ->icon('heroicon-o-photo')
-    //                 ->visible(fn(): bool => Event::where('need_registrant_picture', 'ya')->exists())
-
-    //                 ->url(fn($record): string => PhotoGallery::getUrl([
-    //                     'event_id' => request()->has('event_id'),
-    //                 ])),
-    //         ];
-    // }
 
     public static function getPages(): array
     {

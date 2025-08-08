@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="p-2 text-sm font-medium">
-                    <a href="">Download</a>
+                    <a href="" style="color:orange" >Download</a>
                 </div>
 
             </span>
