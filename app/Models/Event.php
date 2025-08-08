@@ -20,6 +20,7 @@ class Event extends Model
         'event_format',
         'location',
         'poster',
+        'need_registrant_picture',
     ];
 
     
