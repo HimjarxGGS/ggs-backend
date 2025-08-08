@@ -22,7 +22,7 @@ class PendaftarEventResource extends Resource
 {
     protected static ?string $model = PendaftarEvent::class;
     protected static bool   $shouldRegisterNavigation = true;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     public static function canCreate(): bool
     {
         return false;
