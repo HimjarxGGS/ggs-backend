@@ -113,6 +113,7 @@ class PhotoGallery extends Page
         // make it to zip
         // download
 
+        // dd($this->getRegistrants());
         $paths = $this->getRegistrants()->pluck('registrant_picture')->filter()->values();
 
         if ($paths->isEmpty()) {
