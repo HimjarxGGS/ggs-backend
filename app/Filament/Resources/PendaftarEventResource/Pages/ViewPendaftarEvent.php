@@ -5,124 +5,195 @@ namespace App\Filament\Resources\PendaftarEventResource\Pages;
 use App\Filament\Resources\PendaftarEventResource;
 use App\Mail\PendaftarVerifiedMail;
 use App\Models\PendaftarEvent;
-use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\TextEntry;
+use App\Models\User;
+use Filament\Forms\Components\Select;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 
-class ViewPendaftarEvent extends ViewRecord implements HasInfolists
+class ViewPendaftarEvent extends EditRecord implements HasInfolists
 {
     use InteractsWithInfolists;
 
+
     protected static string $resource = PendaftarEventResource::class;
+    // local property bound to the form field (optional, but explicit)
+    public ?string $status = null;
 
     protected static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('pendaftar');
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function update(User $user, PendaftarEvent $event)
     {
-        return $infolist
-            ->record($this->record->load('pendaftar'))
+        return $user->isAdmin(); // or your own condition
+    }
+
+    public function form(Form $form): Form
+    {
+        // dd($this->record);
+        return $form
             ->schema([
                 Section::make('Data Pendaftar')
                     ->schema([
-                        TextEntry::make('pendaftar.nama_lengkap')
-                            ->label('Nama Lengkap'),
+                        Placeholder::make('pendaftar.nama_lengkap')
+                            ->label('Nama Lengkap')
+                            ->content(fn($record) => $record->pendaftar->nama_lengkap),
 
-                        TextEntry::make('pendaftar.email')
-                            ->label('Email'),
+                        Placeholder::make('pendaftar.email')
+                            ->label('Email')
+                            ->content(fn($record) => $record->pendaftar->email),
 
-                        TextEntry::make('pendaftar.age')
-                            ->label('Usia'),
+                        Placeholder::make('pendaftar.age')
+                            ->label('Usia')
+                            ->content(fn($record) => $record->pendaftar->age),
 
-                        TextEntry::make('pendaftar.nomor_telepon')
-                            ->label('Nomor Telepon'),
+                        Placeholder::make('pendaftar.no_telepon')
+                            ->label('Nomor Telepon')
+                            ->content(fn($record) => $record->pendaftar->no_telepon),
 
-                        TextEntry::make('pendaftar.asal_instansi')
-                            ->label('Asal Instansi'),
+                        Placeholder::make('pendaftar.asal_instansi')
+                            ->label('Asal Instansi')
+                            ->content(fn($record) => $record->pendaftar->asal_instansi),
 
-                        TextEntry::make('pendaftar.riwayat_penyakit')
-                            ->label('Riwayat Penyakit')->listWithLineBreaks(),
+                        Placeholder::make('pendaftar.riwayat_penyakit')
+                            ->label('Riwayat Penyakit')
+                            ->content(fn($record) => $record->pendaftar->riwayat_penyakit),
 
-                        TextEntry::make('kesediaan_hadir')
-                            ->label('Ketersediaan Hadir Mengikuti Kegiatan Pada Hari H'),
+                        Placeholder::make('kesediaan_hadir')
+                            ->label('Ketersediaan Hadir Mengikuti Kegiatan Pada Hari H')
+                            ->content(fn($record) => $record->kesediaan_hadir),
 
-                        TextEntry::make('kesediaan_menaati_aturan')
-                            ->label('Ketersediaan Menaati Segala Tata Tertib Yang Berlaku'),
+                        Placeholder::make('kesediaan_menaati_aturan')
+                            ->label('Ketersediaan Menaati Segala Tata Tertib Yang Berlaku')
+                            ->content(fn($record) => $record->kesediaan_menaati_aturan),
 
-                        TextEntry::make('opsi_payment')
-                            ->label('Opsi Pembayaran Yang Dipilih'),
+                        Placeholder::make('opsi_payment')
+                            ->label('Opsi Pembayaran Yang Dipilih')
+                            ->content(fn($record) => $record->opsi_payment),
 
-                        TextEntry::make('status')
-                            ->label('Status Verifikasi'),
+                        Select::make('status')
+                            ->label('Status Verifikasi')
+                            ->options([
+                                'pending' => 'Pending',
+                                'approved' => 'Approved',
+                                'rejected' => 'Rejected',
+                            ])
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set) {
+                                if ($state === 'approved') {
+                                    $this->record->approved_by = Filament::auth()->user()->id;
+                                } else {
+                                    $this->record->approved_by = null;
+                                }
+                            })
+                            ->required(),
+
+                        TextInput::make('approved_by')->default(Filament::auth()->user()->id)->hidden(),
+
                     ])
                     ->columns(2),
 
+
                 Section::make('Bukti')
                     ->schema([
-                        ImageEntry::make('bukti_pembayaran')
-                            ->label('Bukti Pembayaran')
-                            ->height(300)
-                            ->disk('public') // adjust if using different disk
-                            ->url(
-                                fn($record) => $record->bukti_pembayaran
-                                    ? Storage::url($record->bukti_pembayaran)
-                                    : null
-                            ),
-
-                        ImageEntry::make('bukti_share_poster')
+                        Placeholder::make('bukti_share_poster')
                             ->label('Bukti Share Poster')
-                            ->height(300)
-                            ->disk('public')
-                            ->url(
-                                fn($record) => $record->bukti_share_poster
-                                    ? Storage::url($record->bukti_share_poster)
-                                    : null
-                            ),
+                            ->content(function ($record) {
+                                if (! $record->bukti_share_poster) {
+                                    return 'Bukti Share Poster tidak ditemukan.';
+                                }
 
-                        ImageEntry::make('pendaftar.registrant_picture')
+                                $url = $this->resolveImageUrl($record->bukti_share_poster);
+
+                                return new HtmlString("<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>");
+                            }), // IMPORTANT: to render HTML
+
+                        Placeholder::make('bukti_pembayaran')
+                            ->label('Bukti Pembayaran')
+                            ->content(function ($record) {
+                                if (! $record->bukti_pembayaran) {
+                                    return 'Bukti share poster tidak ditemukan.';
+                                }
+
+                                $url = $this->resolveImageUrl($record->bukti_pembayaran);
+
+                                return new HtmlString("<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>");
+                            }),
+
+                        Placeholder::make('registrant_picture')
                             ->label('Foto Pendaftar')
-                            ->height(300)
-                            ->disk('public')
-                            ->url(
-                                fn($record) => $record->pendaftar?->registrant_picture
-                                    ? Storage::url($record->pendaftar->registrant_picture)
-                                    : null
-                            ),
+                            ->content(function ($record) {
+                                if (! $record->pendaftar->registrant_picture) {
+                                    return 'Foto pendaftar tidak ditemukan.';
+                                }
+
+                                $url = $this->resolveImageUrl($record->pendaftar->registrant_picture);
+
+                                return new HtmlString(
+                                    "<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>"
+                                );
+                                // return "<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>";
+                            }),
+
                     ])
                     ->columns(3),
 
-            ]);
+            ])
+            ->columns(1);
     }
 
-    /**
-     * Autosave handler invoked when status changes.
-     * What: persist new status, notify admin, and (if verified) make email form visible.
-     * Why: keep the save server-side, auditable, and trigger any further logic.
-     */
-    public function saveStatus(string $newStatus): void
+    function resolveImageUrl(?string $value): ?string
     {
-        // ensure we have the record model
+        if (! $value) {
+            return null;
+        }
+
+        // If already a full URL, just return it
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        // Otherwise treat it as a storage path
+        return Storage::url($value);
+    }
+
+    // persist the change server-side
+    public function saveStatus(?string $newStatus): void
+    {
         /** @var PendaftarEvent $record */
         $record = $this->record;
 
+        if (! $record) {
+            $this->notify('danger', 'Record not found.');
+            return;
+        }
+
         $record->status = $newStatus;
+
+        if ($newStatus === 'approved') {
+            $record->approved_by =  Filament::auth()->user()->id;
+        } else {
+            $record->approved_by = null; // or keep existing — pick what you need
+        }
+
         $record->save();
 
-        // Flash / notify admin in Filament
-        $this->notify('success', 'Status berhasil disimpan.');
+        // keep UI in sync
+        $this->form->fill(['status' => $record->status]);
+        $this->record->refresh();
 
-        // If verified, optionally fire an event or set a UI flag
-        // In this simple approach, the page will re-render and the email form will show if verified
+        $this->notify('success', "Status updated to: {$newStatus}");
     }
 
     public function getBreadcrumbs(): array
@@ -130,7 +201,7 @@ class ViewPendaftarEvent extends ViewRecord implements HasInfolists
         return [
             route('filament.admin.resources.pendaftar-events.index') => 'Event',
             route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->record->event_id]) => 'Data Pendaftar',
-            route('filament.admin.resources.pendaftar-events.view', ['record' => $this->record->id]) => 'Detail',
+            route('filament.admin.resources.pendaftar-events.edit', ['record' => $this->record->id]) => 'Detail',
         ];
     }
 
@@ -151,5 +222,10 @@ class ViewPendaftarEvent extends ViewRecord implements HasInfolists
         ));
 
         $this->notify('success', 'Email terkirim ke ' . $email);
+    }
+
+    public function getTitle(): string
+    {
+        return 'Detail Pendaftar';
     }
 }
