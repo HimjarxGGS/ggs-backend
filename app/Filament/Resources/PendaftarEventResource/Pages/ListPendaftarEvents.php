@@ -117,7 +117,7 @@ class ListPendaftarEvents extends ListRecords
                 Action::make('view')
                     ->label('Lihat Data')
                     ->icon('heroicon-o-eye')
-                    ->url(fn($record) => route('filament.admin.resources.pendaftar-events.edit', ['record' => $record->id])),
+                    ->url(fn($record) => route('filament.admin.resources.pendaftar-events.detail-pendaftar', ['record' => $record->id])),
 
             ])
             ->headerActions([

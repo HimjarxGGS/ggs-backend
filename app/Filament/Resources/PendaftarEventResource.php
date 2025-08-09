@@ -38,7 +38,7 @@ class PendaftarEventResource extends Resource
     {
         return [
             'index' => Pages\ListPendaftarEvents::route('/'),
-            'edit' => Pages\ViewPendaftarEvent::route('/{record}/edit'),
+            'detail-pendaftar' => Pages\DetailPendaftarEvent::route('/{record}/detail-pendaftar'),
             'photo-gallery' => Pages\PhotoGallery::route('/photo-gallery'),
         ];
     }
