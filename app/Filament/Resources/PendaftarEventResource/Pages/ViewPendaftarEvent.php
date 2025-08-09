@@ -5,15 +5,6 @@ namespace App\Filament\Resources\PendaftarEventResource\Pages;
 use App\Filament\Resources\PendaftarEventResource;
 use App\Mail\PendaftarVerifiedMail;
 use App\Models\PendaftarEvent;
-use Filament\Actions;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -37,70 +28,81 @@ class ViewPendaftarEvent extends ViewRecord implements HasInfolists
         return parent::getEloquentQuery()->with('pendaftar');
     }
 
-public function infolist(Infolist $infolist): Infolist
-{
-    return $infolist
-        ->record($this->record->load('pendaftar'))
-        ->schema([
-            Section::make('Data Pendaftar')
-                ->schema([
-                    TextEntry::make('pendaftar.nama_lengkap')
-                        ->label('Nama Lengkap'),
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->record($this->record->load('pendaftar'))
+            ->schema([
+                Section::make('Data Pendaftar')
+                    ->schema([
+                        TextEntry::make('pendaftar.nama_lengkap')
+                            ->label('Nama Lengkap'),
 
-                    TextEntry::make('pendaftar.email')
-                        ->label('Email'),
+                        TextEntry::make('pendaftar.email')
+                            ->label('Email'),
 
-                    TextEntry::make('pendaftar.nomor_telepon')
-                        ->label('Nomor Telepon'),
+                        TextEntry::make('pendaftar.age')
+                            ->label('Usia'),
 
-                    TextEntry::make('pendaftar.asal_instansi')
-                        ->label('Asal Instansi'),
+                        TextEntry::make('pendaftar.nomor_telepon')
+                            ->label('Nomor Telepon'),
 
-                    TextEntry::make('pendaftar.riwayat_penyakit')
-                        ->label('Riwayat Penyakit'),
-                ])
-                ->columns(2),
+                        TextEntry::make('pendaftar.asal_instansi')
+                            ->label('Asal Instansi'),
 
-            Section::make('Bukti')
-                ->schema([
-                    ImageEntry::make('bukti_pembayaran')
-                        ->label('Bukti Pembayaran')
-                        ->disk('public') // adjust if using different disk
-                        ->url(fn ($record) => $record->bukti_pembayaran
-                            ? Storage::url($record->bukti_pembayaran)
-                            : null
-                        ),
+                        TextEntry::make('pendaftar.riwayat_penyakit')
+                            ->label('Riwayat Penyakit')->listWithLineBreaks(),
 
-                    ImageEntry::make('bukti_share_poster')
-                        ->label('Bukti Share Poster')
-                        ->disk('public')
-                        ->url(fn ($record) => $record->bukti_share_poster
-                            ? Storage::url($record->bukti_share_poster)
-                            : null
-                        ),
+                        TextEntry::make('kesediaan_hadir')
+                            ->label('Ketersediaan Hadir Mengikuti Kegiatan Pada Hari H'),
 
-                    ImageEntry::make('pendaftar.registrant_picture')
-                        ->label('Foto Pendaftar')
-                        ->disk('public')
-                        ->url(fn ($record) => $record->pendaftar?->registrant_picture
-                            ? Storage::url($record->pendaftar->registrant_picture)
-                            : null
-                        ),
-                ])
-                ->columns(3),
+                        TextEntry::make('kesediaan_menaati_aturan')
+                            ->label('Ketersediaan Menaati Segala Tata Tertib Yang Berlaku'),
 
-            // Section::make('Status Verifikasi')
-            //     ->schema([
-            //         SelectEn::make('status')
-            //             ->label('Status Validasi Pembayaran')
-            //             ->options([
-            //                 'pending' => 'Pending',
-            //                 'verified' => 'Verified',
-            //                 'rejected' => 'Rejected',
-            //             ]),
-            //     ]),
-        ]);
-}
+                        TextEntry::make('opsi_payment')
+                            ->label('Opsi Pembayaran Yang Dipilih'),
+
+                        TextEntry::make('status')
+                            ->label('Status Verifikasi'),
+                    ])
+                    ->columns(2),
+
+                Section::make('Bukti')
+                    ->schema([
+                        ImageEntry::make('bukti_pembayaran')
+                            ->label('Bukti Pembayaran')
+                            ->height(300)
+                            ->disk('public') // adjust if using different disk
+                            ->url(
+                                fn($record) => $record->bukti_pembayaran
+                                    ? Storage::url($record->bukti_pembayaran)
+                                    : null
+                            ),
+
+                        ImageEntry::make('bukti_share_poster')
+                            ->label('Bukti Share Poster')
+                            ->height(300)
+                            ->disk('public')
+                            ->url(
+                                fn($record) => $record->bukti_share_poster
+                                    ? Storage::url($record->bukti_share_poster)
+                                    : null
+                            ),
+
+                        ImageEntry::make('pendaftar.registrant_picture')
+                            ->label('Foto Pendaftar')
+                            ->height(300)
+                            ->disk('public')
+                            ->url(
+                                fn($record) => $record->pendaftar?->registrant_picture
+                                    ? Storage::url($record->pendaftar->registrant_picture)
+                                    : null
+                            ),
+                    ])
+                    ->columns(3),
+
+            ]);
+    }
 
     /**
      * Autosave handler invoked when status changes.
