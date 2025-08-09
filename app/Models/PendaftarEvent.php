@@ -16,7 +16,7 @@ class PendaftarEvent extends Model
 
     public function pendaftar(): BelongsTo
     {
-        return $this->belongsTo(Pendaftar::class);
+        return $this->belongsTo(Pendaftar::class, 'pendaftar_id');
     }
 
     public function event(): BelongsTo

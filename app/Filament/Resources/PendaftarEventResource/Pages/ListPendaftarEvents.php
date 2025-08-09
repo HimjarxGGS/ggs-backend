@@ -45,7 +45,7 @@ class ListPendaftarEvents extends ListRecords
     public function getBreadcrumbs(): array
     {
         return $this->isEventList()
-            ? [ route('filament.admin.resources.pendaftar-events.index') => 'Event' ]
+            ? [route('filament.admin.resources.pendaftar-events.index') => 'Event']
             : [
                 route('filament.admin.resources.pendaftar-events.index') => 'Event',
                 route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->eventId]) => 'Pendaftar',
@@ -82,7 +82,7 @@ class ListPendaftarEvents extends ListRecords
                     Action::make('viewRegistrants')
                         ->label('Lihat Data Pendaftar')
                         ->icon('heroicon-o-user-group')
-                        ->url(fn ($record) => route('filament.admin.resources.pendaftar-events.index', ['event_id' => $record->id])),
+                        ->url(fn($record) => route('filament.admin.resources.pendaftar-events.index', ['event_id' => $record->id])),
                 ]);
         }
 
@@ -114,7 +114,11 @@ class ListPendaftarEvents extends ListRecords
                 ]),
             ])
             ->actions([
-                ViewAction::make()->label('Lihat Data'),
+                Action::make('view')
+                    ->label('Lihat Data')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn($record) => route('filament.admin.resources.pendaftar-events.view', ['record' => $record->id])),
+
             ])
             ->headerActions([
                 Action::make('photoFolders')
