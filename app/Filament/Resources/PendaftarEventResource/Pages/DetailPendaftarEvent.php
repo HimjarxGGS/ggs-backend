@@ -20,9 +20,8 @@ use Illuminate\Support\Facades\Storage;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\HtmlString;
 
-class ViewPendaftarEvent extends EditRecord implements HasInfolists
+class DetailPendaftarEvent extends EditRecord 
 {
-    use InteractsWithInfolists;
 
 
     protected static string $resource = PendaftarEventResource::class;
@@ -201,7 +200,7 @@ class ViewPendaftarEvent extends EditRecord implements HasInfolists
         return [
             route('filament.admin.resources.pendaftar-events.index') => 'Event',
             route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->record->event_id]) => 'Data Pendaftar',
-            route('filament.admin.resources.pendaftar-events.edit', ['record' => $this->record->id]) => 'Detail',
+            route('filament.admin.resources.pendaftar-events.detail-pendaftar', ['record' => $this->record->id]) => 'Detail',
         ];
     }
 
