@@ -161,8 +161,8 @@ class PhotoGallery extends Page
     {
         return [
             route('filament.admin.resources.pendaftar-events.index') => 'Event',
-            route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->event->id]) => 'Pendaftar',
-            route('filament.admin.resources.pendaftar-events.photo-gallery') => 'Foto pendaftar',
+            route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->event->id]) => 'Data Pendaftar',
+            route('filament.admin.resources.pendaftar-events.photo-gallery') => 'Foto Pendaftar',
         ];
     }
 }

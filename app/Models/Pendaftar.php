@@ -33,6 +33,11 @@ class Pendaftar extends Model
 
     public function pendaftarEvents() : HasMany
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(PendaftarEvent::class, 'pendaftar_id');
     }
+
+    // public function pendaftarEvent() : BelongsTo
+    // {
+    //     return $this->belongsTo(PendaftarEvent::class);
+    // }
 }
