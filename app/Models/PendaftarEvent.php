@@ -10,6 +10,10 @@ class PendaftarEvent extends Model
     //
     // app/Models/PendaftarEvent.php
 
+    protected $fillable = [
+        'status',
+        'approved_by'
+    ];
     protected $primaryKey = 'id';
 
     protected $with = ['pendaftar'];
