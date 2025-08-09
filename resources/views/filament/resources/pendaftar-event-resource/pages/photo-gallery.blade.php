@@ -27,4 +27,4 @@
         </div>
         @endforelse
     </x-filament::grid>
-</x-filament::page>
+</x-filament::breadcrumbs>

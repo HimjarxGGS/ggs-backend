@@ -57,6 +57,7 @@ class PhotoGallery extends Page
     public function setSearchFromEvent($value)
     {
         $this->search = $value;
+    
     }
 
 
@@ -159,7 +160,7 @@ class PhotoGallery extends Page
     {
         return [
             route('filament.admin.resources.pendaftar-events.index') => 'Event',
-            route('filament.admin.resources.pendaftar-events.index', ['event_id' => request()->query('event_id')]) => 'Pendaftar',
+            route('filament.admin.resources.pendaftar-events.index', ['event_id' => $this->event->id]) => 'Pendaftar',
             route('filament.admin.resources.pendaftar-events.photo-gallery') => 'Foto pendaftar',
         ];
     }
