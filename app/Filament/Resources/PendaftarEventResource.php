@@ -3,153 +3,68 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PendaftarEventResource\Pages;
-use App\Filament\Resources\PendaftarEventResource\Pages\ListPendaftarEvents;
-use App\Filament\Resources\PendaftarEventResource\Pages\PhotoGallery;
-use App\Models\Event;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\PendaftarEvent;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-
 
 class PendaftarEventResource extends Resource
 {
     protected static ?string $model = PendaftarEvent::class;
-    protected static bool   $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationLabel = 'Pendaftar Event';
+    protected static ?string $pluralModelLabel = 'Pendaftar Events';
+    protected static ?string $slug = 'pendaftar-events';
+
+    // permission surface — disable these if you don't want create/edit/delete in Filament panel
     public static function canCreate(): bool
     {
         return false;
     }
 
-    public static function canEdit(Model $record): bool
+    public static function canEdit($record): bool
     {
         return false;
     }
 
-    public static function canDelete(Model $record): bool
+    public static function canDelete($record): bool
     {
         return false;
     }
 
-
-
+    /**
+     * Minimal, generic table. The List page now overrides the table() completely,
+     * but keep this here to avoid surprises if other pages rely on the resource default.
+     */
     public static function table(Table $table): Table
     {
-        $isEventList = !request()->has('event_id');
-
-        // Swap the base query
-        $query = $isEventList
-            ? Event::query()->withCount('pendaftarEvents')
-            : PendaftarEvent::query()
-            ->where('event_id', request()->query('event_id'))
-            ->with('pendaftar');
-
-        $selectedEvent = null;
-        if (!$isEventList) {
-            $selectedEvent = Event::find( request()->query('event_id'));
-        }
         return $table
-            ->query($query)
-
-            // Columns
-            ->columns(
-                $isEventList
-                    ? [
-                        TextColumn::make('name')->label('Event')->sortable()->searchable()->lineClamp(2)->wrap(),
-                        TextColumn::make('event_date')->label('Date')->date()->sortable(),
-                        TextColumn::make('status')->badge()
-                            ->color(fn(string $state): string => match ($state) {
-                                'finished' => 'success',
-                                'active' => 'warning',
-                            })->label('Status')->sortable(),
-                        TextColumn::make('pendaftar_events_count')
-                            ->label('Registrants')
-                            ->counts('pendaftarEvents')
-                            ->sortable(),
-                    ]
-                    : [
-                        TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->sortable()->searchable(),
-                        TextColumn::make('pendaftar.email')->label('Email')->sortable()->searchable(),
-                        TextColumn::make('created_at')->date()->label("Tanggal")->sortable()->searchable(),
-                        TextColumn::make('approvedBy.name')->label("Approved By")->searchable(),
-                        TextColumn::make('pendaftar.user_id')
-                            ->label('Type')
-                            ->formatStateUsing(fn($state) => $state ? 'Member' : 'Guest')
-                            ->badge()
-                            ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary')
-                            ->sortable(),
-
-                        TextColumn::make('status')->label('Status')->badge()
-                            ->color(fn(string $state): string => match ($state) {
-                                'verified' => 'success',
-                                'pending' => 'warning',
-                            })->sortable(),
-
-                    ]
-            )
-
-            // Filters
-            ->filters(
-                $isEventList
-                    ? [
-                        SelectFilter::make('status')
-                            ->label('Status')
-                            ->options(['active' => 'Active', 'finished' => 'Finished']),
-                    ]
-                    : [
-                        SelectFilter::make('status')
-                            ->label('Status')
-                            ->options(['pending' => 'Pending', 'verified' => 'Verified']),
-                    ]
-            )
-            // Actions
-            ->actions(
-                $isEventList
-                    ? [
-                        Action::make('viewRegistrants')
-                            ->label('Lihat Data Pendaftar')
-                            ->icon('heroicon-o-user-group')
-                            ->url(fn($record) => route(
-                                'filament.admin.resources.pendaftar-events.index',
-                                ['event_id' => $record->id],
-                            )),
-                    ]
-                    : [
-                        ViewAction::make()->label('Lihat Data'),
-                        // Action::make('detail')
-                        //     ->label('Lihat Data')
-                        //     ->icon('heroicon-o-eye'),
-                        // ->url(fn($record) => {}), // TODO to detail pendaftar
-                    ]
-            )->headerActions(
-                $isEventList
-                    ? []
-                    : [
-                        Action::make('photoFolders')
-                            ->label('Folder Foto')
-                            ->icon('heroicon-o-photo')
-                            ->visible(fn(): bool => $selectedEvent->need_registrant_picture === 'ya')
-                            ->url(fn($record): string => PhotoGallery::getUrl([
-                                'event_id' => request()->has('event_id'),
-                            ])),
-                    ]
-            );
+            ->query(static::$model::query())
+            ->columns([
+                TextColumn::make('id')->label('ID')->sortable(),
+                // lightweight default columns — keep these generic
+                TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->limit(30)->sortable(),
+                TextColumn::make('pendaftar.email')->label('Email')->limit(35)->sortable(),
+                TextColumn::make('created_at')->label('Created')->dateTime()->sortable(),
+            ])
+            ->filters([
+                // keep resource-level filters minimal; page can replace/add as needed
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make()->label('View'),
+            ])
+            ->headerActions([
+                // leave empty — page should own header actions like "Folder Foto"
+            ]);
     }
-
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListPendaftarEvents::route('/'),
-            'photo-gallery'   => Pages\PhotoGallery::route('/photo-gallery'),
+            'photo-gallery' => Pages\PhotoGallery::route('/photo-gallery'),
         ];
     }
 }
