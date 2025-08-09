@@ -6,24 +6,25 @@ use App\Filament\Resources\PendaftarEventResource;
 use App\Mail\PendaftarVerifiedMail;
 use App\Models\PendaftarEvent;
 use App\Models\User;
+use App\Traits\HasSimpleNotify;
 use Filament\Forms\Components\Select;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\View;
 use Filament\Forms\Form;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Contracts\HasInfolists;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
-class DetailPendaftarEvent extends EditRecord 
+class DetailPendaftarEvent extends EditRecord
 {
-
-
+    use HasSimpleNotify;
     protected static string $resource = PendaftarEventResource::class;
     // local property bound to the form field (optional, but explicit)
     public ?string $status = null;
@@ -85,20 +86,16 @@ class DetailPendaftarEvent extends EditRecord
                             ->label('Status Verifikasi')
                             ->options([
                                 'pending' => 'Pending',
-                                'approved' => 'Approved',
-                                'rejected' => 'Rejected',
+                                'verified' => 'Verified',
                             ])
                             ->reactive()
                             ->afterStateUpdated(function ($state, $set) {
-                                if ($state === 'approved') {
-                                    $this->record->approved_by = Filament::auth()->user()->id;
-                                } else {
-                                    $this->record->approved_by = null;
-                                }
+                                // delegate to a page method 
+                                $this->handleStatusChanged($state);
+
                             })
                             ->required(),
 
-                        TextInput::make('approved_by')->default(Filament::auth()->user()->id)->hidden(),
 
                     ])
                     ->columns(2),
@@ -142,14 +139,79 @@ class DetailPendaftarEvent extends EditRecord
                                 return new HtmlString(
                                     "<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>"
                                 );
-                                // return "<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>";
                             }),
 
                     ])
                     ->columns(3),
 
+                // Email subform: only visible when status === 'approved'
+                Section::make('Template Pesan Email')
+                    ->schema([
+                        TextInput::make('email_subject')
+                            ->label('Subject')
+                            ->required()
+                            ->dehydrated(false)->default('Verifikasi Pendaftaran'),
+
+                        RichEditor::make('email_message')
+                            ->label('Pesan')
+                            ->default("Pendaftaran Sudah Diverifikasi")
+                            ->toolbarButtons(['bold', 'italic', 'link', 'bulletList', 'orderedList', 'code', 'insertImage'])
+                            ->required()
+                            ->dehydrated(false),
+                        View::make('filament.resources.components.email-send-button')->columnSpanFull(),
+
+                    ])
+                    // visibility uses the form state getter $get()
+                    ->visible(fn(callable $get) => $get('status') === 'verified')
+                    ->columns(1),
+
             ])
             ->columns(1);
+    }
+
+    /**
+     * Called when status changes in the Select (immediately).
+     * Persist the change and set approved_by if necessary.
+     */
+    public function handleStatusChanged(?string $newStatus): void
+    {
+        if (! $this->record) {
+            $this->notify('danger', 'Record not loaded.');
+            return;
+        }
+
+        if ($newStatus !== 'pending' && $newStatus !== 'verified') {
+            return;
+        }
+
+        // Save atomically
+        $this->record->status = $newStatus;
+
+        if ($newStatus === 'verified') {
+            $this->record->approved_by = Filament::auth()->user()->id;
+
+            // $this->form->fill([
+            
+
+            // ]);
+        } else {
+            $this->record->approved_by = null;
+        }
+
+        $this->record->save();
+
+        // Keep the form state and record in sync
+        // (filament form instance should reflect change, but be explicit)
+        // setting the template for email subject and message 
+        // (it should can be customized from external config, but that's a prblem for future me (Seta) )
+        $this->form->fill([
+            'status' => $this->record->status,
+            'email_subject' => 'Verifikasi Pendaftaran Event',
+            'email_message' => 'Selamat Pendaftaran Anda Telah Di Verifikasi'
+        ]);
+        $this->record->refresh();
+
+        $this->notify('success', "Status diubah menjadi: {$newStatus}");
     }
 
     function resolveImageUrl(?string $value): ?string
@@ -167,34 +229,6 @@ class DetailPendaftarEvent extends EditRecord
         return Storage::url($value);
     }
 
-    // persist the change server-side
-    public function saveStatus(?string $newStatus): void
-    {
-        /** @var PendaftarEvent $record */
-        $record = $this->record;
-
-        if (! $record) {
-            $this->notify('danger', 'Record not found.');
-            return;
-        }
-
-        $record->status = $newStatus;
-
-        if ($newStatus === 'approved') {
-            $record->approved_by =  Filament::auth()->user()->id;
-        } else {
-            $record->approved_by = null; // or keep existing — pick what you need
-        }
-
-        $record->save();
-
-        // keep UI in sync
-        $this->form->fill(['status' => $record->status]);
-        $this->record->refresh();
-
-        $this->notify('success', "Status updated to: {$newStatus}");
-    }
-
     public function getBreadcrumbs(): array
     {
         return [
@@ -204,23 +238,38 @@ class DetailPendaftarEvent extends EditRecord
         ];
     }
 
-    // 2) Email sending method (invoked by the button on the email subform)
-    public function sendVerificationEmail(array $data = []): void
+    /**
+     * Wire method called by the inline "Kirim Verifikasi" button.
+     * Reads form state (subject & message) and calls mailer.
+     */
+    public function submitEmail(): void
     {
-        $email = $this->record->pendaftar->email;
-        if (! $email) {
+        // grab the current form state; Filament form exposes ->getState()
+        $state = $this->form->getState();
+
+        $subject = $state['email_subject'] ?? 'Verifikasi Pendaftaran';
+        $message = $state['email_message'] ?? '';
+
+        // Basic validation (optional)
+        if (! $this->record->pendaftar?->email) {
             $this->notify('danger', 'Registrant has no email.');
             return;
         }
 
-        // $data should contain 'subject' and 'message'
-        Mail::to($email)->send(new PendaftarVerifiedMail(
-            $this->record,
-            $data['subject'] ?? 'Verifikasi Pembayaran',
-            $data['message'] ?? 'Selamat, pembayaran Anda sudah diverifikasi.'
-        ));
+        try {
+            // TODO Teach me about this @Farid
+            Mail::to($this->record->pendaftar->email)->send(new PendaftarVerifiedMail(
+                $this->record,
+                $subject,
+                $message
+            ));
 
-        $this->notify('success', 'Email terkirim ke ' . $email);
+            $this->notify('success', 'Email terkirim ke ' . $this->record->pendaftar->email);
+        } catch (\Throwable $e) {
+            // log and notify
+            Log::error('Failed to send verification email', ['err' => $e->getMessage()]);
+            $this->notify('danger', 'Gagal mengirim email: ' . $e->getMessage());
+        }
     }
 
     public function getTitle(): string
