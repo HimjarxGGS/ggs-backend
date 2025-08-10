@@ -1,2 +1,1 @@
-test push on a new branch
-test push on a new branch
+test merged branch
