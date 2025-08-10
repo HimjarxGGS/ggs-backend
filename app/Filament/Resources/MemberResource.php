@@ -6,6 +6,7 @@ use App\Filament\Resources\MemberResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -45,6 +46,11 @@ class MemberResource extends Resource
                         DateTimePicker::make('created_at')
                             ->label('Tanggal Bergabung')
                             ->disabled($isView),
+
+                        \Filament\Forms\Components\ViewField::make('foto')
+                            ->view('components.member-foto')
+                            ->label('Foto')
+                            ->visible($isView),
                     ]),
 
                 Section::make('Informasi Pribadi')
@@ -67,7 +73,6 @@ class MemberResource extends Resource
                             )
                             ->disabled($isView),
 
-
                         TextInput::make('usia')
                             ->label('Usia')
                             ->formatStateUsing(
@@ -76,13 +81,12 @@ class MemberResource extends Resource
                             )
                             ->disabled(),
 
-
                         TextInput::make('pendaftar.riwayat_penyakit')
                             ->label('Riwayat Penyakit')
                             ->formatStateUsing(fn($record) => $record?->pendaftar?->riwayat_penyakit)
                             ->disabled($isView),
-
                     ]),
+
             ]);
     }
 
@@ -108,22 +112,20 @@ class MemberResource extends Resource
                 Tables\Columns\TextColumn::make('pendaftar.no_telepon')
                     ->label('Nomor Telepon')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('foto')
-                    ->disk('public')
-                    ->getStateUsing(fn($record) => $record->pendaftar?->registrant_picture)
-                    ->square()
-
+                // Tables\Columns\ImageColumn::make('foto')
+                //     ->label('Foto')
+                //     ->getStateUsing(function ($record) {
+                //         $path = $record->pendaftar?->registrant_picture ?: 'images/dummy.png';
+                //         return asset('storage/' . ltrim($path, '/'));
+                //     })
+                //     ->square()
+                //     ->defaultImageUrl(asset('storage/images/dummy.png')),
             ])
-            ->filters([
-                // 
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Lihat Data'),
-                // Tables\Actions\EditAction::make()->label('Ubah Data'),
             ])
-            ->bulkActions([
-                // 
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getEloquentQuery(): Builder
@@ -135,9 +137,7 @@ class MemberResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            // 
-        ];
+        return [];
     }
 
     public static function getPages(): array
