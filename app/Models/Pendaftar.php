@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pendaftar extends Model
 {
-    use HasFactory; 
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -28,12 +28,12 @@ class Pendaftar extends Model
         'riwayat_penyakit',
     ];
 
-    public function user() : BelongsTo 
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function pendaftarEvents() : HasMany
+    public function pendaftarEvents(): HasMany
     {
         return $this->hasMany(PendaftarEvent::class, 'pendaftar_id');
     }
@@ -44,6 +44,10 @@ class Pendaftar extends Model
             get: fn() => Carbon::parse($this->date_of_birth)->age,
         );
     }
+
+    protected $casts = [
+        'date_of_birth' => 'date',
+    ];
 
     // public function pendaftarEvent() : BelongsTo
     // {

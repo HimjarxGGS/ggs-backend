@@ -10,7 +10,6 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Membuat user admin 'bebek' jika belum ada
         User::firstOrCreate(
             ['username' => 'bebek'], 
             [                         
