@@ -31,7 +31,7 @@ class DetailPendaftarEvent extends EditRecord
 
     // setting the template for email subject and message 
     // (it should can be customized from external config, but that's a prblem for future me (Seta) )
-    public $email_subject = 'Verifikasi Pendaftaran Event';
+    public $email_subject = 'Verifikasi Pendaftaran Event Green Generation Surabaya';
     public $email_message = 'Selamat Pendaftaran Anda Telah Di Verifikasi';
 
     protected static function getEloquentQuery(): Builder
@@ -48,7 +48,6 @@ class DetailPendaftarEvent extends EditRecord
 
     public function form(Form $form): Form
     {
-        // dd($this->record);
         return $form
             ->schema([
                 Section::make('Data Pendaftar')
@@ -275,7 +274,7 @@ class DetailPendaftarEvent extends EditRecord
         }
 
         try {
-            dd($subject);
+            // dd($subject);
             // dd($message);
             // TODO Teach me about this @Farid
             Mail::to($this->record->pendaftar->email)->send(new PendaftarVerifiedMail(
