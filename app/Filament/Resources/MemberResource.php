@@ -108,6 +108,11 @@ class MemberResource extends Resource
                 Tables\Columns\TextColumn::make('pendaftar.no_telepon')
                     ->label('Nomor Telepon')
                     ->searchable(),
+                Tables\Columns\ImageColumn::make('foto')
+                    ->disk('public')
+                    ->getStateUsing(fn($record) => $record->pendaftar?->registrant_picture)
+                    ->square()
+
             ])
             ->filters([
                 // 
