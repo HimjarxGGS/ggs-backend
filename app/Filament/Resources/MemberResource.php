@@ -61,8 +61,12 @@ class MemberResource extends Resource
 
                         TextInput::make('pendaftar.date_of_birth')
                             ->label('Tanggal Lahir')
-                            ->formatStateUsing(fn($record) => $record?->pendaftar?->date_of_birth)
+                            ->formatStateUsing(
+                                fn($record) =>
+                                optional($record?->pendaftar?->date_of_birth)->format('d-m-Y')
+                            )
                             ->disabled($isView),
+
 
                         TextInput::make('usia')
                             ->label('Usia')
