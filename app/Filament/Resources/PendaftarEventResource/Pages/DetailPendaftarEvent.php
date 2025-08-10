@@ -27,12 +27,19 @@ class DetailPendaftarEvent extends EditRecord
     use HasSimpleNotify;
     protected static string $resource = PendaftarEventResource::class;
     // local property bound to the form field (optional, but explicit)
-    public ?string $status = null;
+    // public ?string $status = null;
+
+    // setting the template for email subject and message 
+    // (it should can be customized from external config, but that's a prblem for future me (Seta) )
+    public $email_subject = 'Verifikasi Pendaftaran Event';
+    public $email_message = 'Selamat Pendaftaran Anda Telah Di Verifikasi';
 
     protected static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with('pendaftar');
     }
+
+
 
     public function update(User $user, PendaftarEvent $event)
     {
@@ -92,7 +99,6 @@ class DetailPendaftarEvent extends EditRecord
                             ->afterStateUpdated(function ($state, $set) {
                                 // delegate to a page method 
                                 $this->handleStatusChanged($state);
-
                             })
                             ->required(),
 
@@ -150,14 +156,30 @@ class DetailPendaftarEvent extends EditRecord
                         TextInput::make('email_subject')
                             ->label('Subject')
                             ->required()
-                            ->dehydrated(false)->default('Verifikasi Pendaftaran'),
+                            ->dehydrated(false)
+                            ->default('Verifikasi Pendaftaran')->required()
+                            ->afterStateHydrated(function (TextInput $component) {
+                                // if ($component->getState() === '') {
+                                $component->state($this->email_subject);
+                                // }
+                            })->afterStateUpdated(function ($state) {
+                                $this->email_subject = $state;
+                            }),
 
                         RichEditor::make('email_message')
                             ->label('Pesan')
                             ->default("Pendaftaran Sudah Diverifikasi")
+                            ->dehydrated(false)
                             ->toolbarButtons(['bold', 'italic', 'link', 'bulletList', 'orderedList', 'code', 'insertImage'])
                             ->required()
-                            ->dehydrated(false),
+                            ->afterStateHydrated(function (RichEditor $component) {
+                                // if ($component->getState() === '') {
+                                $component->state($this->email_message);
+                                // }
+                            })->afterStateUpdated(function ($state) {
+                                $this->email_message = $state;
+                            }),
+
                         View::make('filament.resources.components.email-send-button')->columnSpanFull(),
 
                     ])
@@ -189,11 +211,6 @@ class DetailPendaftarEvent extends EditRecord
 
         if ($newStatus === 'verified') {
             $this->record->approved_by = Filament::auth()->user()->id;
-
-            // $this->form->fill([
-            
-
-            // ]);
         } else {
             $this->record->approved_by = null;
         }
@@ -202,13 +219,13 @@ class DetailPendaftarEvent extends EditRecord
 
         // Keep the form state and record in sync
         // (filament form instance should reflect change, but be explicit)
-        // setting the template for email subject and message 
-        // (it should can be customized from external config, but that's a prblem for future me (Seta) )
+
         $this->form->fill([
             'status' => $this->record->status,
-            'email_subject' => 'Verifikasi Pendaftaran Event',
-            'email_message' => 'Selamat Pendaftaran Anda Telah Di Verifikasi'
+            'email_subject' => $this->email_subject,
+            'email_message' => $this->email_message
         ]);
+
         $this->record->refresh();
 
         $this->notify('success', "Status diubah menjadi: {$newStatus}");
@@ -247,8 +264,9 @@ class DetailPendaftarEvent extends EditRecord
         // grab the current form state; Filament form exposes ->getState()
         $state = $this->form->getState();
 
-        $subject = $state['email_subject'] ?? 'Verifikasi Pendaftaran';
-        $message = $state['email_message'] ?? '';
+        // dd($state);
+        $subject = $this->email_subject; //$state['email_subject']; //?? 'Verifikasi Pendaftaran';
+        $message = $this->email_message; //$state['email_message']; //?? '';
 
         // Basic validation (optional)
         if (! $this->record->pendaftar?->email) {
@@ -257,6 +275,8 @@ class DetailPendaftarEvent extends EditRecord
         }
 
         try {
+            dd($subject);
+            // dd($message);
             // TODO Teach me about this @Farid
             Mail::to($this->record->pendaftar->email)->send(new PendaftarVerifiedMail(
                 $this->record,
