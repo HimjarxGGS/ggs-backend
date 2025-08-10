@@ -16,4 +16,12 @@ class ViewMember extends ViewRecord
             // Actions\EditAction::make(),
         ];
     }
+
+    //
+    // public function mount($record): void
+    // {
+    //     parent::mount($record);
+    //     $user = \App\Models\User::findOrFail($record);
+    //     dd($user->pendaftar);
+    // }
 }

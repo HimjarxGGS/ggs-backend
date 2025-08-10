@@ -37,11 +37,11 @@ class MemberResource extends Resource
                         TextInput::make('username')
                             ->label('Username')
                             ->disabled($isView),
-                        
+
                         TextInput::make('email')
                             ->label('Email')
                             ->disabled($isView),
-                        
+
                         DateTimePicker::make('created_at')
                             ->label('Tanggal Bergabung')
                             ->disabled($isView),
@@ -49,40 +49,35 @@ class MemberResource extends Resource
 
                 Section::make('Informasi Pribadi')
                     ->schema([
-                        TextInput::make('pendaftar.nama_lengkap')
-                            ->label('Nama Lengkap')
-                            ->default(fn($record) => $record?->pendaftar?->nama_lengkap)
-                            ->disabled($isView),
-
                         TextInput::make('pendaftar.no_telepon')
                             ->label('Nomor Telepon')
-                            ->default(fn($record) => $record?->pendaftar?->no_telepon)
+                            ->formatStateUsing(fn($record) => $record?->pendaftar?->no_telepon)
                             ->disabled($isView),
 
                         TextInput::make('pendaftar.asal_instansi')
                             ->label('Asal Instansi')
-                            ->default(fn($record) => $record?->pendaftar?->asal_instansi)
+                            ->formatStateUsing(fn($record) => $record?->pendaftar?->asal_instansi)
                             ->disabled($isView),
 
                         TextInput::make('pendaftar.date_of_birth')
                             ->label('Tanggal Lahir')
-                            ->default(fn($record) => $record?->pendaftar?->date_of_birth)
+                            ->formatStateUsing(fn($record) => $record?->pendaftar?->date_of_birth)
                             ->disabled($isView),
 
                         TextInput::make('usia')
                             ->label('Usia')
-                            ->default(
+                            ->formatStateUsing(
                                 fn($record) =>
-                                    $record?->pendaftar?->date_of_birth
-                                        ? now()->diffInYears($record->pendaftar->date_of_birth)
-                                        : '-'
+                                $record?->pendaftar?->age ?? '-'
                             )
-                            ->disabled(), 
+                            ->disabled(),
+
 
                         TextInput::make('pendaftar.riwayat_penyakit')
                             ->label('Riwayat Penyakit')
-                            ->default(fn($record) => $record?->pendaftar?->riwayat_penyakit)
+                            ->formatStateUsing(fn($record) => $record?->pendaftar?->riwayat_penyakit)
                             ->disabled($isView),
+
                     ]),
             ]);
     }
@@ -124,7 +119,9 @@ class MemberResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('role', 'member');
+        return parent::getEloquentQuery()
+            ->where('role', 'member')
+            ->with('pendaftar');
     }
 
     public static function getRelations(): array
