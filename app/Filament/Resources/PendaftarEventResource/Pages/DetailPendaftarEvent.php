@@ -230,21 +230,6 @@ class DetailPendaftarEvent extends EditRecord
         $this->notify('success', "Status diubah menjadi: {$newStatus}");
     }
 
-    // function resolveImageUrl(?string $value): ?string
-    // {
-    //     if (! $value) {
-    //         return null;
-    //     }
-
-    //     // If already a full URL, just return it
-    //     if (filter_var($value, FILTER_VALIDATE_URL)) {
-    //         return $value;
-    //     }
-
-    //     // Otherwise treat it as a storage path
-    //     return Storage::url($value);
-    // }
-
     public function getBreadcrumbs(): array
     {
         return [
