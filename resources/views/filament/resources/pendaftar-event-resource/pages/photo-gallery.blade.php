@@ -7,7 +7,7 @@
         @forelse ($this->getRegistrants() as $pendaftar)
         <div class="max-w-sm bg-orange-50 rounded-lg shadow-lg  justify-center grid">
             <img class="w-full h-48 object-cover"
-                src="{{ $pendaftar->registrant_picture}}"
+                src="{{ $pendaftar->registrant_picture_url}}"
                 alt="Event Image">
             <span class="flex p-2 w-full">
                 <div class="p-2 text-sm font-medium w-full">
@@ -15,7 +15,9 @@
                 </div>
 
                 <div class="p-2 text-sm font-medium">
-                    <a href="" style="color:orange">Download</a>
+                    <a 
+                     href="{{ route('admin.events.registrant-photo', ['event' => $this->event->id, 'path' => base64_encode($pendaftar->registrant_picture), 'registrant_id'=>$pendaftar->id, ]) }}"
+                    style="color:orange">Download</a>
                 </div>
 
             </span>

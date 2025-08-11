@@ -139,7 +139,7 @@ class DetailPendaftarEvent extends EditRecord
                                     return 'Foto pendaftar tidak ditemukan.';
                                 }
 
-                                $url = $this->resolveImageUrl($record->pendaftar->registrant_picture);
+                                $url = $record->pendaftar->registrant_picture_url; //$this->resolveImageUrl($record->pendaftar->regisr);
 
                                 return new HtmlString(
                                     "<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>"

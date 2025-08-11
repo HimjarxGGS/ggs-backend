@@ -5,9 +5,11 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Pendaftar extends Model
 {
@@ -26,7 +28,33 @@ class Pendaftar extends Model
         'asal_instansi',
         'no_telepon',
         'riwayat_penyakit',
+        'registrant_picture'
     ];
+     // Accessor: $pendaftar->registrant_picture_url
+     public function getRegistrantPictureUrlAttribute(): ?string
+     {
+         $path = $this->registrant_picture;
+         if (! $path) {
+             return null;
+         }
+ 
+         // full URL already
+         if (Str::startsWith($path, ['http://', 'https://'])) {
+             return $path;
+         }
+ 
+         // public disk (recommended)
+         if (Storage::disk('public')->exists($path)) {
+             return Storage::url($path);
+         }
+ 
+         // a path inside public/ (fallback)
+         if (file_exists(public_path($path))) {
+             return asset($path);
+         }
+ 
+         return null;
+     }
 
     public function user(): BelongsTo
     {
