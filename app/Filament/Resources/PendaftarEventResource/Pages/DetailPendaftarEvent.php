@@ -230,20 +230,20 @@ class DetailPendaftarEvent extends EditRecord
         $this->notify('success', "Status diubah menjadi: {$newStatus}");
     }
 
-    function resolveImageUrl(?string $value): ?string
-    {
-        if (! $value) {
-            return null;
-        }
+    // function resolveImageUrl(?string $value): ?string
+    // {
+    //     if (! $value) {
+    //         return null;
+    //     }
 
-        // If already a full URL, just return it
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            return $value;
-        }
+    //     // If already a full URL, just return it
+    //     if (filter_var($value, FILTER_VALIDATE_URL)) {
+    //         return $value;
+    //     }
 
-        // Otherwise treat it as a storage path
-        return Storage::url($value);
-    }
+    //     // Otherwise treat it as a storage path
+    //     return Storage::url($value);
+    // }
 
     public function getBreadcrumbs(): array
     {
@@ -260,10 +260,6 @@ class DetailPendaftarEvent extends EditRecord
      */
     public function submitEmail(): void
     {
-        // grab the current form state; Filament form exposes ->getState()
-        $state = $this->form->getState();
-
-        // dd($state);
         $subject = $this->email_subject; //$state['email_subject']; //?? 'Verifikasi Pendaftaran';
         $message = $this->email_message; //$state['email_message']; //?? '';
 
@@ -274,9 +270,7 @@ class DetailPendaftarEvent extends EditRecord
         }
 
         try {
-            // dd($subject);
-            // dd($message);
-            // TODO Teach me about this @Farid
+            
             Mail::to($this->record->pendaftar->email)->send(new PendaftarVerifiedMail(
                 $this->record,
                 $subject,

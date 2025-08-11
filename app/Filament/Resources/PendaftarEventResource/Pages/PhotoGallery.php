@@ -70,63 +70,17 @@ class PhotoGallery extends Page
             //TODO add search action
             Action::make('search-inline')
                 ->view('filament.resources.pendaftar-event-resource.actions.search-inline'),
+
             // direct GET to route to trigger browser download
             Action::make('download-all')
                 ->label('Download Semua Foto')
                 ->icon('heroicon-m-arrow-down-tray')
                 ->url(fn() => route('admin.events.photos.downloadAll', ['event' => $this->event->id]))
                 ->openUrlInNewTab(), // optional, so it triggers separate request
-            // Action::make('Download Semua Foto')
-            //     ->icon('heroicon-m-arrow-down-tray')
-            //     ->action(function () {
-            //         $this->downloadAll();
-            //     })
-            //     ->color('primary')
+       
         ];
     }
 
-
-
-    // public function downloadAll()
-    // {
-
-    //     $paths = $this->getRegistrants()->pluck('registrant_picture')->filter()->values();
-
-    //     if ($paths->isEmpty()) {
-    //         $this->notify('warning', 'Tidak ada foto untuk diunduh.');
-    //         return;
-    //     }
-
-    //     $tempFile = tempnam(sys_get_temp_dir(), 'photos') . '.zip';
-    //     $zip = new ZipArchive();
-
-    //     if ($zip->open($tempFile, ZipArchive::CREATE) !== true) {
-    //         $this->notify('danger', 'Gagal membuat file zip.');
-    //         return;
-    //     }
-
-    //     foreach ($paths as $path) {
-    //         // if DB stores full URLs, you might need to fetch by HTTP — prefer storing disk paths
-    //         if (Storage::exists($path)) {
-    //             $contents = Storage::disk('public')->get($path);
-    //             $zip->addFromString(basename($path), $contents);
-    //         } else {
-    //             // attempt to add by URL if the DB stores absolute URLs
-    //             try {
-    //                 $contents = file_get_contents($path);
-    //                 if ($contents !== false) {
-    //                     $zip->addFromString(basename($path), $contents);
-    //                 }
-    //             } catch (\Throwable $e) {
-    //                 // skip broken files
-    //             }
-    //         }
-    //     }
-
-    //     $zip->close();
-
-    //     return response()->download($tempFile, "event-{$this->event->id}-photos.zip")->deleteFileAfterSend(true);
-    // }
 
     public function getTitle(): string
     {
