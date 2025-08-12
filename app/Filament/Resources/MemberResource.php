@@ -33,60 +33,59 @@ class MemberResource extends Resource
 
         return $form
             ->schema([
+                \Filament\Forms\Components\Grid::make(3)->visible($isView)
+                    ->schema([
+                        Section::make('Detail Member')
+                            ->schema([
+                                \Filament\Forms\Components\Placeholder::make('nama_lengkap_placeholder')
+                                    ->label('Nama Lengkap')
+                                    ->content(fn($record) => $record?->pendaftar?->nama_lengkap ?? '-'),
+
+                                \Filament\Forms\Components\Placeholder::make('username_placeholder')
+                                    ->label('Username')
+                                    ->content(fn($record) => $record->username),
+
+                                \Filament\Forms\Components\Placeholder::make('email_placeholder')
+                                    ->label('Email')
+                                    ->content(fn($record) => $record->email),
+
+                                \Filament\Forms\Components\Placeholder::make('instansi_placeholder')
+                                    ->label('Asal Instansi')
+                                    ->content(fn($record) => $record?->pendaftar?->asal_instansi ?? '-'),
+
+                                \Filament\Forms\Components\Placeholder::make('notelp_placeholder')
+                                    ->label('Nomor Telepon')
+                                    ->content(fn($record) => $record?->pendaftar?->no_telepon ?? '-'),
+
+                                \Filament\Forms\Components\Placeholder::make('usia_placeholder')
+                                    ->label('Usia')
+                                    ->content(fn($record) => $record?->pendaftar?->age ?? '-'),
+
+                                \Filament\Forms\Components\Placeholder::make('created_at_placeholder')
+                                    ->label('Registered at')
+                                    ->content(fn($record) => optional($record->created_at)->format('d M Y')),
+
+                                \Filament\Forms\Components\Placeholder::make('penyakit_placeholder')
+                                    ->label('Riwayat Penyakit')
+                                    ->content(fn($record) => $record?->pendaftar?->riwayat_penyakit ?? '-'),
+
+                            ])
+                            ->columns(2)
+                            ->columnSpan(2), 
+                        Section::make('Foto')
+                            ->schema([
+                                \Filament\Forms\Components\ViewField::make('foto')
+                                    ->view('components.member-foto')
+                                    ->label(''),
+                            ])
+                            ->columnSpan(1), 
+                    ]),
+
                 Section::make('Informasi Akun')
+                    ->hidden($isView)
                     ->schema([
-                        TextInput::make('username')
-                            ->label('Username')
-                            ->disabled($isView),
-
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->disabled($isView),
-
-                        DateTimePicker::make('created_at')
-                            ->label('Tanggal Bergabung')
-                            ->disabled($isView),
-
-                        \Filament\Forms\Components\ViewField::make('foto')
-                            ->view('components.member-foto')
-                            ->label('Foto')
-                            ->visible($isView),
+                        TextInput::make('username')->label('Username'),
                     ]),
-
-                Section::make('Informasi Pribadi')
-                    ->schema([
-                        TextInput::make('pendaftar.no_telepon')
-                            ->label('Nomor Telepon')
-                            ->formatStateUsing(fn($record) => $record?->pendaftar?->no_telepon)
-                            ->disabled($isView),
-
-                        TextInput::make('pendaftar.asal_instansi')
-                            ->label('Asal Instansi')
-                            ->formatStateUsing(fn($record) => $record?->pendaftar?->asal_instansi)
-                            ->disabled($isView),
-
-                        TextInput::make('pendaftar.date_of_birth')
-                            ->label('Tanggal Lahir')
-                            ->formatStateUsing(
-                                fn($record) =>
-                                optional($record?->pendaftar?->date_of_birth)->format('d-m-Y')
-                            )
-                            ->disabled($isView),
-
-                        TextInput::make('usia')
-                            ->label('Usia')
-                            ->formatStateUsing(
-                                fn($record) =>
-                                $record?->pendaftar?->age ?? '-'
-                            )
-                            ->disabled(),
-
-                        TextInput::make('pendaftar.riwayat_penyakit')
-                            ->label('Riwayat Penyakit')
-                            ->formatStateUsing(fn($record) => $record?->pendaftar?->riwayat_penyakit)
-                            ->disabled($isView),
-                    ]),
-
             ]);
     }
 
