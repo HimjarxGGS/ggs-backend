@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
                 // Skenario 2: Ikut 1 event (30% kemungkinan)
                 elseif ($randomNumber <= 6) {
                     $randomEvent = $events->random(1)->pluck('id');
-                    $member->pendaftar->events()->attach($randomEvent, ['status' => 'Finished']);
+                    $member->pendaftar->events()->attach($randomEvent, ['status' => 'pending']);
                 }
                 
                 // Skenario 3: Ikut beberapa event (40% kemungkinan)
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
                         $eventCount = $events->count();
                     }
                     $randomEvents = $events->random($eventCount)->pluck('id');
-                    $member->pendaftar->events()->attach($randomEvents, ['status' => 'Finished']);
+                    $member->pendaftar->events()->attach($randomEvents, ['status' => 'pending']);
                 }
             }
         }

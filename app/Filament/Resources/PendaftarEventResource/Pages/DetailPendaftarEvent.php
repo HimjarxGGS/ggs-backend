@@ -50,6 +50,7 @@ class DetailPendaftarEvent extends EditRecord
     {
         return $form
             ->schema([
+
                 Section::make('Data Pendaftar')
                     ->schema([
                         Placeholder::make('pendaftar.nama_lengkap')
@@ -87,6 +88,10 @@ class DetailPendaftarEvent extends EditRecord
                         Placeholder::make('opsi_payment')
                             ->label('Opsi Pembayaran Yang Dipilih')
                             ->content(fn($record) => $record->opsi_payment),
+
+                        // Placeholder::make('pendaftar.user_id')
+                        //     ->label('Tipe Pendaftar')
+                        //     ->content(fn($state) => $state ? 'Member' : 'Guest'),
 
                         Select::make('status')
                             ->label('Status Verifikasi')
@@ -255,7 +260,7 @@ class DetailPendaftarEvent extends EditRecord
         }
 
         try {
-            
+
             Mail::to($this->record->pendaftar->email)->send(new PendaftarVerifiedMail(
                 $this->record,
                 $subject,
