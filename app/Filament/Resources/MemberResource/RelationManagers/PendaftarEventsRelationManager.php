@@ -19,8 +19,7 @@ class PendaftarEventsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('status')
             ->columns([
-                // Mengambil data dari relasi 'event' di model PendaftarEvent
-                Tables\Columns\TextColumn::make('event.waktu_event')
+                Tables\Columns\TextColumn::make('event.event_date') 
                     ->label('Waktu Event')
                     ->date('d M Y'),
 
