@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PendaftarEventsRelationManager extends RelationManager
 {
@@ -18,8 +19,11 @@ class PendaftarEventsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('status')
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->whereIn('status', ['Active', 'Finished']);
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('event.event_date') 
+                Tables\Columns\TextColumn::make('event.event_date')
                     ->label('Waktu Event')
                     ->date('d M Y'),
 
