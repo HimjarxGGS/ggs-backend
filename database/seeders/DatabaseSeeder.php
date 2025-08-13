@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Event;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,37 +11,45 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test Admin',
-            'username' => 'bebek',
-            'password' => Hash::make('bebek'),
-            'role' => 'admin'
-        ]);
-
-        User::factory()->create([
-            'name' => 'Test Member',
-            'username' => 'ayam',
-            'password' => Hash::make('ayam'),
-            'role' => 'member'
-        ]);
-
-        Event::factory(10)->create();
-
         $this->call([
             UserSeeder::class,
             MemberSeeder::class,
+            EventSeeder::class,
         ]);
 
-        $pendaftar = \App\Models\Pendaftar::inRandomOrder()->first();
+        $members = \App\Models\User::where('role', 'member')->get();
+        $events = \App\Models\Event::all();
         
-        if ($pendaftar) {
-            $eventsToAttach = \App\Models\Event::inRandomOrder()->take(3)->pluck('id');
-            
-            $pendaftar->events()->attach($eventsToAttach, [
-                'status' => 'Finished', 
-                'created_at' => now(), 
-                'updated_at' => now()
-            ]);
+        if ($events->isEmpty()) {
+            return;
+        }
+
+        foreach ($members as $member) {
+            // check member memiliki detail pendaftar
+            if ($member->pendaftar) {
+                $randomNumber = rand(1, 10);
+
+                // Skenario 1: Tidak ikut event sama sekali (30% kemungkinan)
+                if ($randomNumber <= 3) {
+                    continue; // Lanjut ke member berikutnya
+                }
+                
+                // Skenario 2: Ikut 1 event (30% kemungkinan)
+                elseif ($randomNumber <= 6) {
+                    $randomEvent = $events->random(1)->pluck('id');
+                    $member->pendaftar->events()->attach($randomEvent, ['status' => 'Finished']);
+                }
+                
+                // Skenario 3: Ikut beberapa event (40% kemungkinan)
+                else {
+                    $eventCount = rand(2, 5);
+                    if ($eventCount > $events->count()) {
+                        $eventCount = $events->count();
+                    }
+                    $randomEvents = $events->random($eventCount)->pluck('id');
+                    $member->pendaftar->events()->attach($randomEvents, ['status' => 'Finished']);
+                }
+            }
         }
     }
 }
