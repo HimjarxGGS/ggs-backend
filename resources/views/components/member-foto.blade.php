@@ -9,9 +9,7 @@
 </div>
 
 {{-- <div class="flex justify-center">
-    <img src="{{ $getRecord()->pendaftar?->registrant_picture 
-        ? asset('storage/' . $getRecord()->pendaftar->registrant_picture) 
-        : asset('storage/images/dummy.png') }}"
+    <img src="{{ $getRecord()->pendaftar?->registrant_picture_url }}"
         alt="Foto Member"
         style="max-width:200px; border-radius:8px;">
 </div> --}}
