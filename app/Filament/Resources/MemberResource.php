@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Section;
+use App\Filament\Resources\MemberResource\RelationManagers;
 
 class MemberResource extends Resource
 {
@@ -71,14 +72,14 @@ class MemberResource extends Resource
 
                             ])
                             ->columns(2)
-                            ->columnSpan(2), 
+                            ->columnSpan(2),
                         Section::make('Foto')
                             ->schema([
                                 \Filament\Forms\Components\ViewField::make('foto')
                                     ->view('components.member-foto')
                                     ->label(''),
                             ])
-                            ->columnSpan(1), 
+                            ->columnSpan(1),
                     ]),
 
                 Section::make('Informasi Akun')
@@ -136,7 +137,9 @@ class MemberResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            RelationManagers\PendaftarEventsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

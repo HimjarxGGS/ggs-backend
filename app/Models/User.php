@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -77,5 +78,10 @@ class User extends Authenticatable implements FilamentUser
     public function getIsGuestAttribute(): bool
     {
         return is_null($this->user_id);
+    }
+
+        public function pendaftarEvents(): HasManyThrough
+    {
+        return $this->hasManyThrough(PendaftarEvent::class, Pendaftar::class);
     }
 }
