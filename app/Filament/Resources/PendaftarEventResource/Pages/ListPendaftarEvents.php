@@ -128,6 +128,18 @@ class ListPendaftarEvents extends ListRecords
                     ->url(fn(): string => PhotoGallery::getUrl([
                         'event_id' => $this->eventId,
                     ])),
+
+                Action::make('exportExcel')
+                    ->label('Export Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->visible(fn(): bool => !$this->isEventList())
+                    ->action(function () {
+                        return \Maatwebsite\Excel\Facades\Excel::download(
+                            new \App\Exports\PendaftarEventExport($this->eventId),
+                            'Pendaftar_Event_' . $this->event->name . '.xlsx'
+                        );
+                    }),
             ]);
     }
 }
