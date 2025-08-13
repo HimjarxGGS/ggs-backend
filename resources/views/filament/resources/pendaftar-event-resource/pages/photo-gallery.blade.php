@@ -16,7 +16,7 @@
 
                 <div class="p-2 text-sm font-medium">
                     <a 
-                     href="{{ route('admin.events.registrant-photo', ['event' => $this->event->id, 'path' => base64_encode($pendaftar->registrant_picture), 'registrant_id'=>$pendaftar->id, ]) }}"
+                     href="{{ route('admin.events.registrant-photo', ['event' => $this->event->id, 'path' => base64_encode($pendaftar->registrant_picture_url), 'registrant_id'=>$pendaftar->id, ]) }}"
                     style="color:orange">Download</a>
                 </div>
 
