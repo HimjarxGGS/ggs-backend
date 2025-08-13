@@ -86,35 +86,37 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Event')->lineClamp(2)->wrap(),
-                TextColumn::make('event_date')->label('Date')->date(),
+                TextColumn::make('name')
+                    ->label('Event')
+                    ->lineClamp(2)
+                    ->wrap()
+                    ->searchable(),
 
-                TextColumn::make('status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                TextColumn::make('event_date')
+                    ->label('Tanggal')
+                    ->date('d M Y')
+                    ->sortable(),
 
-                        'finished' => 'warning',
-                        'active' => 'success',
-                    })->label('Status'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'warning' => 'finished',
+                        'success' => 'active',
+                    ]),
 
                 TextColumn::make('pendaftar_events_count')
                     ->label('Jumlah Pendaftar')
-                    ->counts('pendaftarEvents'), // Laravel 11's countable relationship
+                    ->counts('pendaftarEvents')
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                // Action::make('View Registrants')
-                //     ->url(fn($record) => route('filament.admin.resources.pendaftar-events.index', [
-                //         'event_id' => $record->id,
-                //     ]))
-                //     ->label('Lihat Pendaftar')
-                //     ->icon('heroicon-o-eye'),
+                Tables\Actions\ViewAction::make(),
             ])
             ->filters([
-                // optional filters
+                //
             ]);
     }
-
 
     public static function getRelations(): array
     {
