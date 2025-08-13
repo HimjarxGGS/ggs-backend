@@ -31,7 +31,54 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nama Event')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\RichEditor::make('description')
+                            ->label('Deskripsi')
+                            ->required()
+                            ->columnSpanFull(),
+
+                        Forms\Components\DatePicker::make('event_date')
+                            ->label('Tanggal Event')
+                            ->required(),
+
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'active' => 'Active',
+                                'finished' => 'Finished',
+                            ])
+                            ->required(),
+
+                        Forms\Components\Select::make('event_format')
+                            ->label('Format Event')
+                            ->options([
+                                'online' => 'Online',
+                                'offline' => 'Offline',
+                            ])
+                            ->required(),
+
+                        Forms\Components\TextInput::make('location')
+                            ->label('Lokasi')
+                            ->required(),
+
+                        Forms\Components\FileUpload::make('poster')
+                            ->image()
+                            ->directory('event-posters'),
+                        Forms\Components\Select::make('need_registrant_picture')
+                            ->label('Butuh Foto Pendaftar?')
+                            ->options([
+                                'ya' => 'Ya',
+                                'tidak' => 'Tidak',
+                            ])
+                            ->required()
+                            ->default('tidak'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -43,13 +90,12 @@ class EventResource extends Resource
                 TextColumn::make('event_date')->label('Date')->date(),
 
                 TextColumn::make('status')
-                ->badge()
-                ->color(fn(string $state): string => match ($state) {
-                    
-                    'finished' => 'warning',
-                    'active' => 'success',
-                    
-                })->label('Status'),
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+
+                        'finished' => 'warning',
+                        'active' => 'success',
+                    })->label('Status'),
 
                 TextColumn::make('pendaftar_events_count')
                     ->label('Jumlah Pendaftar')
