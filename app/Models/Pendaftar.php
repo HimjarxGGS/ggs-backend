@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Pendaftar extends Model
 {
@@ -30,31 +31,35 @@ class Pendaftar extends Model
         'riwayat_penyakit',
         'registrant_picture'
     ];
-     // Accessor: $pendaftar->registrant_picture_url
-     public function getRegistrantPictureUrlAttribute(): ?string
-     {
-         $path = $this->registrant_picture;
-         if (! $path) {
-             return null;
-         }
- 
-         // full URL already
-         if (Str::startsWith($path, ['http://', 'https://'])) {
-             return $path;
-         }
- 
-         // public disk (recommended)
-         if (Storage::disk('public')->exists($path)) {
-             return Storage::url($path);
-         }
- 
-         // a path inside public/ (fallback)
-         if (file_exists(public_path($path))) {
-             return asset($path);
-         }
- 
-         return null;
-     }
+    
+    public function getRegistrantPictureUrlAttribute(): ?string
+    {
+        $path = $this->registrant_picture;
+        if (! $path) {
+            return null;
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+
+        // public disk (recommended)
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::url($path);
+        }
+
+        // a path inside public/ (fallback)
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        return null;
+    }
+
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, 'pendaftar_events');
+    }
 
     public function user(): BelongsTo
     {

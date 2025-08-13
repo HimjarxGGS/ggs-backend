@@ -34,5 +34,17 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MemberSeeder::class,
         ]);
+
+        $pendaftar = \App\Models\Pendaftar::inRandomOrder()->first();
+        
+        if ($pendaftar) {
+            $eventsToAttach = \App\Models\Event::inRandomOrder()->take(3)->pluck('id');
+            
+            $pendaftar->events()->attach($eventsToAttach, [
+                'status' => 'Finished', 
+                'created_at' => now(), 
+                'updated_at' => now()
+            ]);
+        }
     }
 }
