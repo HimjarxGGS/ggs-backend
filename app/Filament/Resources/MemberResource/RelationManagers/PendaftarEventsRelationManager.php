@@ -18,10 +18,10 @@ class PendaftarEventsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('status')
-            ->modifyQueryUsing(function (Builder $query) {
-                $query->whereIn('status', ['Active', 'Finished']);
-            })
+            // ->recordTitleAttribute('status')
+            // ->modifyQueryUsing(function (Builder $query) {
+            //     $query->whereIn('status', ['Active', 'Finished']);
+            // })
             ->columns([
                 Tables\Columns\TextColumn::make('event.event_date')
                     ->label('Waktu Event')
@@ -31,12 +31,11 @@ class PendaftarEventsRelationManager extends RelationManager
                     ->label('Nama Event')
                     ->searchable(),
 
-                Tables\Columns\BadgeColumn::make('status')
-                    ->label('Status')
+                Tables\Columns\BadgeColumn::make('event.status')
+                    ->label('Status Event')
                     ->colors([
-                        'success' => 'Active',
-                        'danger' => 'Finished',
-                        'warning' => 'Pending',
+                        'warning' => 'active',
+                        'success' => 'finished',
                     ]),
             ])
             ->filters([])
