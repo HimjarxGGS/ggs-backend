@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('bukti_share')->nullable();
             $table->enum('kesediaan_hadir', ['ya', 'tidak'])->default('ya');
             $table->enum('kesediaan_menaati_aturan', ['ya', 'tidak'])->default('ya');
+            // $table->string('registrant_picture')->nullable();
             $table->timestamps();
         });
     }
