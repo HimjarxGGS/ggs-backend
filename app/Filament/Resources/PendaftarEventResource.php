@@ -39,6 +39,9 @@ class PendaftarEventResource extends Resource
     public static function getNavigationBadge(): ?string{
         return static::getModel()::where('status', '=', 'pending')->count(); // show how many pendaftar is pending (new pendaftar)
     }
+    public static function getNavigationBadgeColor(): ?string{
+        return static::getModel()::where('status', '=', 'pending')->count() > 10 ? 'warning' : 'primary'; 
+    }
 
     public static function table(Table $table): Table
     {

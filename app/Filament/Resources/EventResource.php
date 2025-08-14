@@ -20,6 +20,7 @@ class EventResource extends Resource
     protected static ?string $model = Event::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-star';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-star';
 
     public static function getEloquentQuery(): Builder
     {

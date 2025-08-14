@@ -20,6 +20,7 @@ class MemberResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-users';
     protected static ?string $navigationLabel = 'Member';
     protected static ?string $pluralModelLabel = 'Data Member';
 
