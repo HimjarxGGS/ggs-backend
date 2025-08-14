@@ -11,12 +11,15 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\Event;
+use App\Filament\Resources\PendaftarEventResource\Pages\PhotoGallery;
 
 class PendaftarEventResource extends Resource
 {
     protected static ?string $model = PendaftarEvent::class;
     protected static bool   $shouldRegisterNavigation = true;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-clipboard-document-list';
     public static function canCreate(): bool
     {
         return false;
@@ -33,6 +36,9 @@ class PendaftarEventResource extends Resource
     }
 
     
+    public static function getNavigationBadge(): ?string{
+        return static::getModel()::where('status', '=', 'pending')->count(); // show how many pendaftar is pending (new pendaftar)
+    }
 
     public static function table(Table $table): Table
     {
