@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-        $validHistoryStatuses = ['Active', 'Finished'];
+        $validHistoryStatuses = ['Pending', 'Verified'];
 
         foreach ($members as $member) {
             if ($member->pendaftar) {

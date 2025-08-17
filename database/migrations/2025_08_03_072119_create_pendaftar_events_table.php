@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('approved_by')->nullable()->default(null)->constrained('users')->nullOnDelete();
             $table->foreignId('event_id')->constrained('events');
             $table->foreignId('pendaftar_id')->constrained('pendaftars');
-            $table->string('status')->default('pending');
+            $table->enum('status', ['pending', 'verified'])->default('pending');
             $table->string('bukti_payment')->nullable();
             $table->string('opsi_payment')->nullable();
             $table->string('bukti_share')->nullable();
