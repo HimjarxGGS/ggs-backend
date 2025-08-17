@@ -132,8 +132,8 @@ class BlogResource extends Resource
                     })->icons([
                         'heroicon-o-x',
                         'heroicon-o-document' => static fn($state): bool => $state === 'draft',
-                        'heroicon-o-refresh' => static fn($state): bool => $state === 'reviewing',
-                        'heroicon-o-truck' => static fn($state): bool => $state === 'published',
+                        'heroicon-o-arrow-path' => static fn($state): bool => $state === 'reviewing',
+                        'heroicon-o-paper-airplane' => static fn($state): bool => $state === 'published',
                     ])->searchable(),
 
                 TextColumn::make('created_at')
