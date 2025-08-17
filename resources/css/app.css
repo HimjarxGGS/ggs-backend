@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fi-sidebar-nav {
+    background-color: #236b35 !important;
+}
