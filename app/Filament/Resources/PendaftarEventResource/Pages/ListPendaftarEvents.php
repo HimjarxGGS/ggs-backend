@@ -92,7 +92,7 @@ class ListPendaftarEvents extends ListRecords
             ->columns([
                 TextColumn::make('pendaftar.nama_lengkap')->label('Nama')->sortable()->searchable(),
                 TextColumn::make('pendaftar.email')->label('Email')->sortable()->searchable(),
-                TextColumn::make('created_at')->date()->label("Tanggal")->sortable()->searchable(),
+                TextColumn::make('created_at')->date()->label("Tanggal Daftar")->sortable()->searchable(),
                 TextColumn::make('approvedBy.name')->label("Approved By")->searchable(),
                 TextColumn::make('pendaftar.user_id')
                     ->label('Type')
