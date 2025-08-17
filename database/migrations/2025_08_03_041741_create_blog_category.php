@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('blog_id')->constrained('blogs')->cascadeOnDelete();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            
+            $table->softDeletes();
         });
     }
 

@@ -19,10 +19,10 @@ return new class extends Migration
             $table->enum('status', ['active', 'finished'])->default('active');
             $table->enum('event_format', ['online', 'offline'])->default('offline');
             $table->string('location');
-            // $table->string('poster');
             $table->string('poster')->nullable();
             $table->enum('need_registrant_picture', ['ya', 'tidak'])->default('tidak');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

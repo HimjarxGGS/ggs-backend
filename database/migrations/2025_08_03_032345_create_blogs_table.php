@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('pic')->nullable()->constrained('users')->reference('id')->on('users')->nullOnDelete();
             $table->enum('status', ['draft', 'reviewing', 'published'])->default('published');
             $table->timestamps();
+            $table->softDeletes();
             
         });
     }

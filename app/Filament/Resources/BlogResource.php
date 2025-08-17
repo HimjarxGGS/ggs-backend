@@ -25,6 +25,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -54,7 +55,6 @@ class BlogResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TagsInput::make('tag')->required()
-                    ->hint("Masukkan Setidaknya 3 tag")
                     ->nestedRecursiveRules([
                         'max:255',
                     ]),
@@ -145,6 +145,7 @@ class BlogResource extends Resource
                     ->dateTimeTooltip(),
             ])
             ->filters([
+                // TrashedFilter::make(),
                 //
                 Filter::make('published')->query(fn(Builder $query): Builder => $query->where('status', 'published')),
                 Filter::make('draft')->query(fn(Builder $query): Builder => $query->where('status', 'draft')),
@@ -160,16 +161,17 @@ class BlogResource extends Resource
                 // Table\Actions\::make().
                 ViewAction::make()->label("Lihat Data"),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()->after(function (Blog $record) {
-                    // delete single
-                    if ($record->img) {
-                        Storage::disk('public')->delete($record->img);
-                    }
-                    // delete multiple
-                    if ($record->galery) {
-                        foreach ($record->galery as $ph) Storage::disk('public')->delete($ph);
-                    }
-                }),
+                Tables\Actions\DeleteAction::make(),
+                // ->after(function (Blog $record) {
+                //     // delete single
+                //     if ($record->img) {
+                //         Storage::disk('public')->delete($record->img);
+                //     }
+                //     // delete multiple
+                //     if ($record->galery) {
+                //         foreach ($record->galery as $ph) Storage::disk('public')->delete($ph);
+                //     }
+                // }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

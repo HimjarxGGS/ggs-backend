@@ -16,15 +16,14 @@ return new class extends Migration
             $table->foreignId('approved_by')->nullable()->default(null)->constrained('users')->nullOnDelete();
             $table->foreignId('event_id')->constrained('events');
             $table->foreignId('pendaftar_id')->constrained('pendaftars');
-            // $table->enum('status', ['pending', 'verified'])->default('pending');
             $table->string('status')->default('pending');
             $table->string('bukti_payment')->nullable();
             $table->string('opsi_payment')->nullable();
             $table->string('bukti_share')->nullable();
             $table->enum('kesediaan_hadir', ['ya', 'tidak'])->default('ya');
             $table->enum('kesediaan_menaati_aturan', ['ya', 'tidak'])->default('ya');
-            // $table->string('registrant_picture')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

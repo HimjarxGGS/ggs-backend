@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('riwayat_penyakit');
             $table->string('registrant_picture')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

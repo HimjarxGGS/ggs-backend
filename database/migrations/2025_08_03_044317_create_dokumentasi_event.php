@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('event_id')->constrained('events');
             $table->string('image');
-            //
+            $table->softDeletes();
         });
     }
 
