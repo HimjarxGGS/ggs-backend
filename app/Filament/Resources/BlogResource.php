@@ -72,7 +72,6 @@ class BlogResource extends Resource
                 FileUpload::make('img')
                     ->label("Main Image For Blog")
                     ->image()
-                    ->required()
                     ->disk('public')
                     ->directory('blog-thumbnail')
                     ->columnSpanFull()
