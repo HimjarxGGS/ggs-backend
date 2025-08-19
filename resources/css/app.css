@@ -5,3 +5,10 @@
 .fi-sidebar-nav {
     background-color: #236b35 !important;
 }
+
+.pendaftar-pulse {
+    transform-origin: center;
+    transition: transform 180ms ease;
+    transform: scale(1.06);
+  }
+  
