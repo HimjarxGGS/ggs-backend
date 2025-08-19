@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PendaftarEventResource\Pages;
 use App\Models\PendaftarEvent;
+use Livewire\Attributes\On;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -35,7 +36,12 @@ class PendaftarEventResource extends Resource
         return false;
     }
 
-    
+    // public static function getNavigationBadge(): ?string
+    // {
+    //     return view('livewire.pendaftar-counter')->render();
+    // }
+
+    #[On('pendaftarUpdated')]
     public static function getNavigationBadge(): ?string{
         return static::getModel()::where('status', '=', 'pending')->count(); // show how many pendaftar is pending (new pendaftar)
     }
@@ -84,7 +90,7 @@ class PendaftarEventResource extends Resource
                             ->badge()
                             ->color(fn($state) => $state === 'Member' ? 'success' : 'secondary')
                             ->sortable(),
-                            
+
                         TextColumn::make('status')->label('Status')->badge()
                             ->color(fn(string $state): string => match ($state) {
                                 'verified' => 'success',
