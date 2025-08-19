@@ -25,7 +25,7 @@
 
         @empty
         <div class="col-span-4 text-center text-gray-500 py-10">
-            Tidak ada foto yang cocok dengan "{{ $this->search }}"
+            Tidak ada foto yang ditemukan
         </div>
         @endforelse
     </x-filament::grid>
