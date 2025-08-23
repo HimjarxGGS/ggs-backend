@@ -123,7 +123,7 @@ class EventResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\DokumentasiEventsRelation::class,
         ];
     }
 

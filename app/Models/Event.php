@@ -24,20 +24,24 @@ class Event extends Model
         'need_registrant_picture',
     ];
 
-    
+
     public function dokumentasi(): HasMany
     {
         return $this->hasMany(DokumentasiEvent::class);
     }
-    
+
     public function pendaftarEvents(): HasMany
     {
         return $this->hasMany(PendaftarEvent::class);
     }
 
-    // Optional: shortcut to count verified participants
     public function getVerifiedPendaftarCountAttribute(): int
     {
         return $this->pendaftarEvents()->where('status', 'verified')->count();
+    }
+
+    public function dokumentasiEvents()
+    {
+        return $this->hasMany(\App\Models\DokumentasiEvent::class);
     }
 }

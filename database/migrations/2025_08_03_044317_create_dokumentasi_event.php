@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events');
             $table->string('image');
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 
