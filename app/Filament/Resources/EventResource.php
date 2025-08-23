@@ -12,6 +12,12 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\RepeatableEntry;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -25,7 +31,7 @@ class EventResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withCount('pendaftarEvents'); 
+            ->withCount('pendaftarEvents');
     }
 
     public static function form(Form $form): Form
@@ -71,6 +77,7 @@ class EventResource extends Resource
                         Forms\Components\FileUpload::make('poster')
                             ->image()
                             ->directory('event-posters'),
+
                         Forms\Components\Select::make('need_registrant_picture')
                             ->label('Butuh Foto Pendaftar?')
                             ->options([
@@ -117,6 +124,34 @@ class EventResource extends Resource
             ])
             ->filters([
                 //
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Detail Event')
+                    ->schema([
+                        TextEntry::make('name')->label('Nama Event'),
+                        TextEntry::make('description')->label('Deskripsi')->html(),
+                        TextEntry::make('event_date')->label('Tanggal Event')->date(),
+                        TextEntry::make('status')->label('Status'),
+                        TextEntry::make('event_format')->label('Format Event'),
+                        TextEntry::make('location')->label('Lokasi'),
+                        ImageEntry::make('poster')->label('Poster'),
+                    ])
+                    ->columns(2),
+
+                Section::make('Dokumentasi')
+                    ->schema([
+                        RepeatableEntry::make('dokumentasiEvents')
+                            ->schema([
+                                ImageEntry::make('image')->label('Foto'),
+                            ])
+                            ->grid(3)
+                            ->label('Foto Dokumentasi'),
+                    ]),
             ]);
     }
 
