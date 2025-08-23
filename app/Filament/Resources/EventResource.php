@@ -25,7 +25,7 @@ class EventResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withCount('pendaftarEvents'); // includes events with 0 registrants
+            ->withCount('pendaftarEvents'); 
     }
 
     public static function form(Form $form): Form
@@ -46,7 +46,8 @@ class EventResource extends Resource
 
                         Forms\Components\DatePicker::make('event_date')
                             ->label('Tanggal Event')
-                            ->required(),
+                            ->required()
+                            ->minDate(now()),
 
                         Forms\Components\Select::make('status')
                             ->options([
