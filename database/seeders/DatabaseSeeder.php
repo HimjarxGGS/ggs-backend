@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MemberSeeder::class,
             EventSeeder::class,
+            BlogSeeder::class,
         ]);
 
         // ...

@@ -103,7 +103,7 @@ class BlogResource extends Resource
                             ->hidden(fn(Get $get) => $get('status') !== 'published')
                             ->default(
                                 now()
-                            ) ->timezone('Asia/Jakarta')->native(false)->closeOnDateSelection(),
+                            )->timezone('Asia/Jakarta')->native(false)->closeOnDateSelection(),
                     ]),
                 TextInput::make('pic')->required()->default(fn() => Filament::auth()->user()->id)->hidden(),
 
