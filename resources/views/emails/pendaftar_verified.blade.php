@@ -24,7 +24,7 @@
                     <!-- Body -->
                     <tr>
                         <td style="padding: 30px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #333333;">
-                            <p>Halo <strong>{{ $pendaftar->name ?? 'Peserta' }}</strong>,</p>
+                            <p>Halo <strong>{{ $pendaftar->pendaftar->nama_lengkap ?? 'Peserta' }}</strong>,</p>
 
                             <p>{!! nl2br(e($messageBody)) !!}</p>
 
