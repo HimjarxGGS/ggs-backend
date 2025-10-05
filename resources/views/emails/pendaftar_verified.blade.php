@@ -26,7 +26,7 @@
                         <td style="padding: 30px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #333333;">
                             <p>Halo <strong>{{ $pendaftar->name ?? 'Peserta' }}</strong>,</p>
 
-                            <p>{!! nl2br(e($messageBody)) !!}</p>
+                            {!! $messageBody !!}
 
                             <p>Salam hangat,<br>
                             <strong>Tim Penyelenggara</strong></p>

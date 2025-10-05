@@ -6,6 +6,7 @@ use App\Models\PendaftarEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\HtmlString;
 
 class PendaftarVerifiedMail extends Mailable
 {
@@ -26,7 +27,7 @@ class PendaftarVerifiedMail extends Mailable
             ->view('emails.pendaftar_verified')
             ->with([
                 'pendaftar' => $this->pendaftar,
-                'messageBody' => $this->emailMessage,
+                'messageBody' => new HtmlString($this->emailMessage),
             ]);
     }
 }
