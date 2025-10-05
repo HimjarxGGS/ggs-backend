@@ -85,7 +85,7 @@ class EventPhotoController extends Controller
         }
 
         $zip->close();
-        return response()->download($tempFile, "event-{$event->id}-photos.zip")->deleteFileAfterSend(true);
+        return response()->download($tempFile, "event-{$event->name}-photos.zip")->deleteFileAfterSend(true);
     }
 
     public function downloadRegistrantPhoto(Event $event, Request $request)
