@@ -56,7 +56,7 @@
         const badges = new Set();
 
         //common Filament badge classes (do not modify classes/styles)
-        document.querySelectorAll('.fi-badge').forEach(el => badges.add(el));
+        document.querySelectorAll('.fi-sidebar-item .fi-badge').forEach(el => badges.add(el));
         return Array.from(badges);
     }
 
