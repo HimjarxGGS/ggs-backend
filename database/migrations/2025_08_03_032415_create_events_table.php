@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('location');
             $table->string('poster')->nullable();
             $table->enum('need_registrant_picture', ['ya', 'tidak'])->default('tidak');
+            $table->string('after_movie_url')->nullable();
+            $table->string('sertif_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

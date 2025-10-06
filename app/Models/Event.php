@@ -22,6 +22,8 @@ class Event extends Model
         'location',
         'poster',
         'need_registrant_picture',
+        'after_movie_url',
+        'sertif_url',
     ];
 
 
