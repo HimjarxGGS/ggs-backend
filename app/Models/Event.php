@@ -44,4 +44,5 @@ class Event extends Model
     {
         return $this->hasMany(\App\Models\DokumentasiEvent::class);
     }
+
 }
