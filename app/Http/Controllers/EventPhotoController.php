@@ -144,6 +144,8 @@ class EventPhotoController extends Controller
             return Storage::download($path, $filename);
         }
 
+        clearstatcache();
+        dd(file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
         try{
             return response()->download(url($path), $filename);
         }catch(\Exception $e){
@@ -154,7 +156,7 @@ class EventPhotoController extends Controller
         //     return response()->download(url($path), $filename);
         // }
         
-        // dd(file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
+        
         abort(404, "File doesn't exists or not found");
     }
 
