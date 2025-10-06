@@ -147,8 +147,8 @@ class EventPhotoController extends Controller
         if (file_exists(public_path($path))) {
             return response()->download(public_path($path), $filename);
         }
-        dd($path);
-        dd($filename);
+        // dd($filename);
+        dd(public_path($path), $filename);
         abort(400, "File doesn't exists or not found");
     }
 
