@@ -52,8 +52,8 @@ class EventResource extends Resource
 
                         Forms\Components\DatePicker::make('event_date')
                             ->label('Tanggal Event')
-                            ->required()
-                            ->minDate(now()),
+                            ->required(),
+                            // ->minDate(today()),
 
                         Forms\Components\Select::make('status')
                             ->options([
