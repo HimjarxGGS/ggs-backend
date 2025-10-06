@@ -79,8 +79,9 @@ class EventResource extends Resource
                             ->directory('event-posters'),
                         Forms\Components\TextInput::make('after_movie_url')
                             ->label('Link Youtube After Movie'),
+                            
                         Forms\Components\TextInput::make('sertif_url')
-                            ->label('Link Youtube After Movie'),
+                            ->label('Link Sertif'),
                         Forms\Components\Select::make('need_registrant_picture')
                             ->label('Butuh Foto Pendaftar?')
                             ->options([
