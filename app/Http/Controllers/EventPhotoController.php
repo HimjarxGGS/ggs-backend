@@ -144,10 +144,17 @@ class EventPhotoController extends Controller
             return Storage::download($path, $filename);
         }
 
-        clearstatcache();
-        dd(Storage::disk('public')->exists($path), file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
+        // clearstatcache();
+        // dd(Storage::disk('public')->exists($path), file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
         try{
-            return response()->download(url($path), $filename);
+            
+            $resp = Http::timeout(10)->get(url($path));
+            if (! $resp->successful()) {
+                abort(408, "Request Timeout");
+            }
+            $contentType = $resp->header('Content-Type', 'application/octet-stream');
+            return response()->streamDownload(fn() => print($resp->body()), $filename, ['Content-Type' => $contentType]);
+            // return response()->download(url($path), $filename);
         }catch(\Exception $e){
             abort(404, $e->getMessage());
         }
