@@ -29,13 +29,13 @@
                             style="padding: 30px; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #333333;">
                             <p>Halo <strong>{{ $pendaftar->pendaftar->nama_lengkap ?? 'Peserta' }}</strong>,</p>
 
-                            {!! $messageBody !!}
+                            <p>{!! nl2br(e($messageBody)) !!}</p>
 
                             <p>
-                                Untuk informasi lebih lanjut mengenai acara ini, silakan kunjungi website resmi
-                                kami:<br>
-                                <a href="{{ config('app.url') }}" style="color:#4CAF50;">{{ config('app.url') }}</a><br><br>
+                                Untuk informasi lebih lanjut silahkan kunjungi website resmi kami : 
+                                    <a href="{{ config('app.urlfe') }}" style="color:#4CAF50;">{{ Green Generation Surabaya }}</a><br><br>
                             </p>
+
 
                             <p>Salam hangat,<br>
                                 <strong>Tim Penyelenggara Green Generation Surabaya</strong>
@@ -43,18 +43,23 @@
                         </td>
                     </tr>
 
+
                     <!-- Footer -->
                     <tr>
-                        <td bgcolor="#f4f4f4" align="center" style="padding: 20px; font-size: 12px; font-family: Arial, sans-serif; color: #666666;">
-                            Website: <a href="{{ config('app.url') }}" style="color:#4CAF50;">{{ config('app.url') }}</a><br><br>
+                        <td bgcolor="#f4f4f4" align="center"
+                            style="padding: 20px; font-size: 12px; font-family: Arial, sans-serif; color: #666666;">
+                            Email ini dikirim otomatis dari sistem Green Generation Surabaya.<br>
+
                             Jika Anda menerima email ini karena kesalahan, mohon abaikan saja.
                         </td>
                     </tr>
                 </table>
                 <!-- End Main Container -->
             </td>
+
         </tr>
     </table>
+
 </body>
 
 </html>
