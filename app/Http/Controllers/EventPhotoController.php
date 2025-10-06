@@ -145,7 +145,7 @@ class EventPhotoController extends Controller
         }
 
         clearstatcache();
-        dd(file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
+        dd(Storage::disk('public')->exists($path), file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
         try{
             return response()->download(url($path), $filename);
         }catch(\Exception $e){
