@@ -155,7 +155,7 @@ class EventPhotoController extends Controller
         // }
         
         // dd(file_exists($path), file_exists(public_path($path)), file_exists(url($path)), url($path), $filename);
-        // abort(404, "File doesn't exists or not found");
+        abort(404, "File doesn't exists or not found");
     }
 
     
