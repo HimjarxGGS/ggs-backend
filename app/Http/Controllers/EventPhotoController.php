@@ -91,21 +91,21 @@ class EventPhotoController extends Controller
     public function downloadRegistrantPhoto(Event $event, Request $request)
     {
         if (! filament()->auth()->check()) {
-            abort(403);
+            abort(403, "Forbidden Access");
         }
 
         $encoded = $request->query('path');
         $registrantId = $request->query('registrant_id');
         // dd($registrantId);
         if (! $encoded) {
-            abort(404);
+            abort(400, "Missing parameter");
         }
         if (! $registrantId) {
-            abort(404);
+            abort(404, "Can't found registrant id");
         }
         $path = base64_decode($encoded);
         if (! $path) {
-            abort(404);
+            abort(404, "Can't found path");
         }
 
         $registrant = $event->pendaftarEvents()
@@ -115,7 +115,7 @@ class EventPhotoController extends Controller
             ->firstWhere('id', $registrantId);
 
         if (! $registrant) {
-            abort(403);
+            abort(403, "Forbidden registrant id");
         }
         $filename = $this->formatRegistrantFilename($registrant, $path);
         // $filename = $this->generatePhotoFilename($registrant);
@@ -133,7 +133,7 @@ class EventPhotoController extends Controller
             } else {
                 $resp = Http::timeout(10)->get($path);
                 if (! $resp->successful()) {
-                    abort(404);
+                    abort(408, "Request Timeout");
                 }
                 $contentType = $resp->header('Content-Type', 'application/octet-stream');
                 return response()->streamDownload(fn() => print($resp->body()), $filename, ['Content-Type' => $contentType]);
@@ -148,7 +148,7 @@ class EventPhotoController extends Controller
             return response()->download(public_path($path), $filename);
         }
 
-        abort(404);
+        abort(404, "File doesn't exists or not found");
     }
 
     

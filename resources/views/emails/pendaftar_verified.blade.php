@@ -34,8 +34,7 @@
                             <p>
                                 Untuk informasi lebih lanjut mengenai acara ini, silakan kunjungi website resmi
                                 kami:<br>
-                                <a href="https://ggs.or.id" target="_blank"
-                                    style="color:#4CAF50; text-decoration:none;">https://ggs.or.id</a>
+                                <a href="{{ config('app.url') }}" style="color:#4CAF50;">{{ config('app.url') }}</a><br><br>
                             </p>
 
                             <p>Salam hangat,<br>
@@ -46,11 +45,8 @@
 
                     <!-- Footer -->
                     <tr>
-                        <td bgcolor="#f4f4f4" align="center"
-                            style="padding: 20px; font-size: 12px; font-family: Arial, sans-serif; color: #666666;">
-                            Email ini dikirim otomatis dari sistem Green Generation Surabaya.<br>
-                            Alamat: Jl. Contoh No. 123, Surabaya, Indonesia.<br>
-                            Website: <a href="https://ggs.or.id" style="color:#4CAF50;">ggs.or.id</a><br><br>
+                        <td bgcolor="#f4f4f4" align="center" style="padding: 20px; font-size: 12px; font-family: Arial, sans-serif; color: #666666;">
+                            Website: <a href="{{ config('app.url') }}" style="color:#4CAF50;">{{ config('app.url') }}</a><br><br>
                             Jika Anda menerima email ini karena kesalahan, mohon abaikan saja.
                         </td>
                     </tr>
