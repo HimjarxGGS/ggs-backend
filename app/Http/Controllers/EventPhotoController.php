@@ -96,7 +96,7 @@ class EventPhotoController extends Controller
 
         $encoded = $request->query('path');
         $registrantId = $request->query('registrant_id');
-        // dd($registrantId);
+        
         if (! $encoded) {
             abort(400, "Missing parameter");
         }
@@ -147,7 +147,8 @@ class EventPhotoController extends Controller
         if (file_exists(public_path($path))) {
             return response()->download(public_path($path), $filename);
         }
-
+        dd($path);
+        dd($filename);
         abort(400, "File doesn't exists or not found");
     }
 
