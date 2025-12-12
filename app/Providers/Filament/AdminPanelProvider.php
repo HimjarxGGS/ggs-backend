@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->authGuard('web')
-            ->brandName("Green Generation Surabaya")
+            ->brandName("Youth For Earth Surabaya")
             ->brandLogoHeight(50)
             ->path('')
             ->login(Login::class)
