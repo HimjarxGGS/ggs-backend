@@ -113,26 +113,30 @@ class DetailPendaftarEvent extends EditRecord
 
                 Section::make('Bukti')
                     ->schema([
-                        Placeholder::make('bukti_share_poster')
+                        Placeholder::make('bukti_share')
                             ->label('Bukti Share Poster')
                             ->content(function ($record) {
-                                if (! $record->bukti_share_poster) {
+                                
+                                if (!$record->bukti_share) {
                                     return 'Bukti Share Poster tidak ditemukan.';
                                 }
-
-                                $url = $this->resolveImageUrl($record->bukti_share_poster);
+                                
+                                // dd(storage_path($record->bukti_share));
+                                
+                                $url =asset("storage/".$record->bukti_share) ; //$this->$record->bukti_share_url;
 
                                 return new HtmlString("<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>");
                             }), // IMPORTANT: to render HTML
 
-                        Placeholder::make('bukti_pembayaran')
+                        Placeholder::make('bukti_payment')
                             ->label('Bukti Pembayaran')
                             ->content(function ($record) {
-                                if (! $record->bukti_pembayaran) {
-                                    return 'Bukti share poster tidak ditemukan.';
+                                if (!$record->bukti_payment) {
+                                    return 'Bukti Pembayaran tidak ditemukan.';
                                 }
-
-                                $url = $this->resolveImageUrl($record->bukti_pembayaran);
+                                
+                                $url =asset("storage/".$record->bukti_payment) ;
+                                //$this->$record->bukti_payment_url;
 
                                 return new HtmlString("<img src='{$url}' alt='Bukti Share Poster' style='max-height:300px; border-radius: 8px;'/>");
                             }),
@@ -140,7 +144,7 @@ class DetailPendaftarEvent extends EditRecord
                         Placeholder::make('registrant_picture')
                             ->label('Foto Pendaftar')
                             ->content(function ($record) {
-                                if (! $record->pendaftar->registrant_picture) {
+                                if (!$record->pendaftar->registrant_picture) {
                                     return 'Foto pendaftar tidak ditemukan.';
                                 }
 

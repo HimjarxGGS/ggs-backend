@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 class PendaftarEvent extends Model
 {
     use SoftDeletes;
@@ -36,7 +39,27 @@ class PendaftarEvent extends Model
     // Optional: dynamic URL for displaying bukti images
     public function getBuktiShareUrlAttribute(): string
     {
-        return asset('storage/' . $this->bukti_share);
+        $path = $this->bukti_share;
+        if (! $path) {
+            return "";
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://'])) {
+            return $path;
+        }
+
+        // public disk (recommended)
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::url($path);
+        }
+
+        // a path inside public/ (fallback)
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        return "";
+        // return asset('storage/' . $this->bukti_share);
     }
 
     public function getBuktiPaymentUrlAttribute(): string
